@@ -1,0 +1,6 @@
+pytest
+assertpy
+pytest-rerunfailures
+pytest-xdist
+requests
+filelock
