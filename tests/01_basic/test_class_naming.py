@@ -1,4 +1,4 @@
-class TestMath:
+class TestNamingClass:
     def test_class_multiplication(self):
         assert 3 * 4 == 12
 
@@ -26,6 +26,7 @@ class TestMath:
 
     def test_class_not_equal_to(self):
         assert 3 != 4
+
 
 class CheckInclude:
     def test_class_is_in(self):

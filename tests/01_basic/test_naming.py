@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_division():
     assert 10 / 5 == 2
 
@@ -35,9 +38,11 @@ def test_not_equal_to():
     assert 3 != 4
 
 
+@pytest.mark.slow
 def test_is_in():
     assert "a" in "abc"
 
 
+@pytest.mark.slow
 def test_is_not_in():
     assert "d" not in "abc"
