@@ -507,5 +507,14 @@ pytest -n auto
 * `--dist` loadscope: Tests are grouped by module for test functions and by class for test methods. Groups are distributed to available workers as whole units. This guarantees that all tests in a group run in the same process. This can be useful if you have expensive module-level or class-level fixtures. Grouping by class takes priority over grouping by module.
 * `--dist` loadfile: Tests are grouped by their containing file. Groups are distributed to available workers as whole units. This guarantees that all tests in a file run in the same worker.
 * `--dist` loadgroup: Tests are grouped by the xdist_group mark. Groups are distributed to available workers as whole units. This guarantees that all tests with same xdist_group name run in the same worker. Example: `@pytest.mark.xdist_group(name="group1")`
-**Code examples**: [`test_01_parallel_load_default.py`](tests/14_plugins/03_parallel/test_01_parallel_load_default.py) [`test_02_parallel_load_scope.py`](tests/14_plugins/03_parallel/test_02_parallel_load_scope.py) [`test_03_parallel_load_file.py`](tests/14_plugins/03_parallel/test_03_parallel_load_file.py) [`test_04_parallel_load_group.py`](tests/14_plugins/03_parallel/test_04_parallel_load_group.py) [`test_05_parallel_log_workers.py`](tests/14_plugins/03_parallel/05_log_workers/test_05_parallel_log_workers.py) [`test_06_parallel_fixture.py`](tests/14_plugins/03_parallel/06_single_session_scope_fixture/test_06_parallel_fixture.py)  
-**Plugin docs**: [`plugin page`](https://pypi.org/project/pytest-xdist/) [`full documentation page`](https://pytest-xdist.readthedocs.io)  
+
+**Code examples**: 
+[`test_01_parallel_load_default.py`](tests/14_plugins/03_parallel/test_01_parallel_load_default.py) 
+[`test_02_parallel_load_scope.py`](tests/14_plugins/03_parallel/test_02_parallel_load_scope.py) 
+[`test_03_parallel_load_file.py`](tests/14_plugins/03_parallel/test_03_parallel_load_file.py) 
+[`test_04_parallel_load_group.py`](tests/14_plugins/03_parallel/test_04_parallel_load_group.py) 
+[`test_05_parallel_log_workers.py`](tests/14_plugins/03_parallel/05_log_workers/test_05_parallel_log_workers.py) 
+[`test_06_parallel_fixture.py`](tests/14_plugins/03_parallel/06_single_session_scope_fixture/test_06_parallel_fixture.py)  
+**Plugin docs**: 
+[`plugin page`](https://pypi.org/project/pytest-xdist/) 
+[`full documentation page`](https://pytest-xdist.readthedocs.io)  
