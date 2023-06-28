@@ -397,7 +397,7 @@ env_files=
   .users.dev.env
   .config.dev.env
 ```
-**Code examples**: [`test_dotenv.py`](tests/13_configuration/02_dotenv/test_dotenv.py)
+**Code examples**: [`test_dotenv.py`](tests/13_configuration/02_dotenv/test_dotenv.py)  
 **Plugin docs**: [`about pytest-dotenv`](https://pypi.org/project/pytest-dotenv/)  
 ___
 [`Logging levels`](#contents)
