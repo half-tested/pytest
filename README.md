@@ -419,6 +419,7 @@ log_format = %(asctime)s %(levelname)s %(message)s
 log_date_format = %Y-%m-%d %H:%M:%S
 ```
 Alternatively may be passed as an arguments `--log-cli-level`, `--log-cli-forma`, `--log-cli-date-format`.
+
 **Code examples**: [`test_logging.py`](tests/12_logging/test_logging.py) [`pytest.ini`](tests/12_logging/pytest.ini)  
 **Pytest docs**: [`about CLI logs`](https://docs.pytest.org/en/stable/how-to/logging.html#live-logs)  
 ___
