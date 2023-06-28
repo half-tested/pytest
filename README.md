@@ -365,8 +365,10 @@ usefixtures =
 ```
 pytest -o console_output_style=classic -o cache_dir=/tmp/mycache
 ```
-**Code examples**: [`pytest.ini]`(pytest.ini)  
-**Pytest docs**: [`full list of config options`](https://docs.pytest.org/en/stable/reference/reference.html#configuration-options)
+**Code examples**: 
+[`pytest.ini`](pytest.ini)  
+**Pytest docs**: 
+[`full list of config options`](https://docs.pytest.org/en/stable/reference/reference.html#configuration-options)  
 ___
 [`pytest_addoption`](#contents)
 -
@@ -420,8 +422,11 @@ log_date_format = %Y-%m-%d %H:%M:%S
 ```
 Alternatively may be passed as an arguments `--log-cli-level`, `--log-cli-forma`, `--log-cli-date-format`.
 
-**Code examples**: [`test_logging.py`](tests/12_logging/test_logging.py) [`pytest.ini`](tests/12_logging/pytest.ini)  
-**Pytest docs**: [`about CLI logs`](https://docs.pytest.org/en/stable/how-to/logging.html#live-logs)  
+**Code examples**: 
+[`test_logging.py`](tests/12_logging/test_logging.py) 
+[`pytest.ini`](tests/12_logging/pytest.ini)  
+**Pytest docs**: 
+[`about CLI logs`](https://docs.pytest.org/en/stable/how-to/logging.html#live-logs)  
 ___
 [`File logs`](#contents)
 -
