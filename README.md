@@ -433,8 +433,12 @@ log_file_format = %(asctime)s %(levelname)s %(message)s
 log_file_date_format = %Y-%m-%d %H:%M:%S
 ```
 Alternatively may be passed as an arguments `--log-file-level`, `--log-file-forma`, `--log-file-date-format`.
-**Code examples**: [`test_logging.py`](tests/12_logging/test_logging.py) [`pytest.ini`](tests/12_logging/pytest.ini)  
-**Pytest docs**: [`about file logs`](https://docs.pytest.org/en/stable/how-to/logging.html#live-logs)  
+
+**Code examples**: 
+[`test_logging.py`](tests/12_logging/test_logging.py) 
+[`pytest.ini`](tests/12_logging/pytest.ini)  
+**Pytest docs**: 
+[`about file logs`](https://docs.pytest.org/en/stable/how-to/logging.html#live-logs)  
 ___
 [`Fixture caplog`](#contents)
 -
