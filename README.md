@@ -310,8 +310,8 @@ def smtp_connection(request):
     print(f"finalizing {smtp_connection}")
     smtp_connection.close()
 ```
-**Code examples**: [`test_parametrize_by_fixture.py`](tests/11_parametrize/02_fixture/test_parametrize_by_fixture.py)
-**Pytest docs**: [`about fixture parametrization`](https://docs.pytest.org/en/stable/how-to/fixtures.html#fixture-parametrize)
+**Code examples**: [`test_parametrize_by_fixture.py`](tests/11_parametrize/02_fixture/test_parametrize_by_fixture.py)  
+**Pytest docs**: [`about fixture parametrization`](https://docs.pytest.org/en/stable/how-to/fixtures.html#fixture-parametrize)  
 ___
 [`pytest_generate_tests`](#contents)
 -
