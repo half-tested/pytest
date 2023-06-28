@@ -4,17 +4,16 @@ Pytest
 
 Contents
 -
-**&nbsp;&nbsp;&nbsp;** **1. Basic:** **&nbsp;** **[`Naming convention`](#naming-convention)**__,__ **[`Test discovery`](#test-discovery)**__,__ **[`Run tests`](#run-tests)**__,__ **[`Re-run tests`](#re-run-tests)**__,__ **[`CLI flags`](#cli-flags)**__.__  
-**&nbsp;&nbsp;&nbsp;** **2. Fixtures:** **&nbsp;**  **[`What is fixture`](#what-is-fixture)**__,__**[`conftest.py`](#conftestpy)**__,__ **[`Fixtures scope`](#fixtures-scope)**__,__ **[`Autouse fixtures`](#autouse-fixtures)**__,__ **[`Fixtures order`](#fixtures-order)**__,__ **[`Built-in fixtures`](#built-in-fixtures)**__,__ **[`yield fixtures`](#combinatorics)**__.__  
-**&nbsp;&nbsp;&nbsp;** **3. Marks:** **&nbsp;**  **[`skip`](#skip-mark)**__,__ **[`skipif`](#skipif-mark)**__,__ **[`xfail mark`](#xfail-mark)**__,__ **[`usefixtures mark`](#usefixtures-mark)**__,__ **[`Registering marks`](#registering-marks)**__.__  
-**&nbsp;&nbsp;&nbsp;** **4. Parametrization:** **&nbsp;**  **[`Parametrize mark`](#parametrize-mark)**__,__ **[`Fixture parametrization`](#fixture-parametrization)**__,__ **[`pytest_generate_tests`](#pytestgeneratetests)**__.__  
-**&nbsp;&nbsp;&nbsp;** **5. Configuration:** **&nbsp;**  **[`pytest.ini`](#pytestini)**__,__ **[`pytest_addoption`](#pytestaddoption)**__,__ **[`pytest-dotenv`](#pytest-dotenv)**__.__  
-**&nbsp;&nbsp;&nbsp;** **6. Logging:** **&nbsp;**  **[`Logging levels`](#logging-levels)**__,__ **[`CLI logs`](#cli-logs)**__,__ **[`File logs`](#file-logs)**__,__ **[`Fixture caplog`](#format)**__.__  
-**&nbsp;&nbsp;&nbsp;** **7. Plugins:** **&nbsp;**  **[`assertpy`](#assertpy)**__,__ **[`pytest-rerunfailures`](#pytest-rerunfailures)**__,__ **[`pytest-xdist`](#pytest-xdist)**__.__  
+**&nbsp;&nbsp;&nbsp;** **1. Conventions:** **&nbsp;** **[`Naming convention`](#naming-convention)**__,__ **[`Test discovery`](#test-discovery)**__.__  
+**&nbsp;&nbsp;&nbsp;** **2. Test execution:** **&nbsp;** **[`Run tests`](#run-tests)**__,__ **[`Re-run tests`](#re-run-tests)**__,__ **[`CLI flags`](#cli-flags)**__.__  
+**&nbsp;&nbsp;&nbsp;** **3. Fixtures:** **&nbsp;**  **[`What is fixture`](#what-is-fixture)**__,__**[`conftest.py`](#conftestpy)**__,__ **[`Fixtures scope`](#fixtures-scope)**__,__ **[`Autouse fixtures`](#autouse-fixtures)**__,__ **[`Fixtures order`](#fixtures-order)**__,__ **[`Built-in fixtures`](#built-in-fixtures)**__,__ **[`yield fixtures`](#combinatorics)**__.__  
+**&nbsp;&nbsp;&nbsp;** **4. Marks:** **&nbsp;**  **[`skip`](#skip-mark)**__,__ **[`skipif`](#skipif-mark)**__,__ **[`xfail mark`](#xfail-mark)**__,__ **[`usefixtures mark`](#usefixtures-mark)**__,__ **[`Registering marks`](#registering-marks)**__.__  
+**&nbsp;&nbsp;&nbsp;** **5. Parametrization:** **&nbsp;**  **[`Parametrize mark`](#parametrize-mark)**__,__ **[`Fixture parametrization`](#fixture-parametrization)**__,__ **[`pytest_generate_tests`](#pytestgeneratetests)**__.__  
+**&nbsp;&nbsp;&nbsp;** **6. Configuration:** **&nbsp;**  **[`pytest.ini`](#pytestini)**__,__ **[`pytest_addoption`](#pytestaddoption)**__,__ **[`pytest-dotenv`](#pytest-dotenv)**__.__  
+**&nbsp;&nbsp;&nbsp;** **7. Logging:** **&nbsp;**  **[`Logging levels`](#logging-levels)**__,__ **[`CLI logs`](#cli-logs)**__,__ **[`File logs`](#file-logs)**__,__ **[`Fixture caplog`](#format)**__.__  
+**&nbsp;&nbsp;&nbsp;** **8. Libs and plugins:** **&nbsp;**  **[`assertpy`](#assertpy)**__,__ **[`pytest-rerunfailures`](#pytest-rerunfailures)**__,__ **[`pytest-xdist`](#pytest-xdist)**__.__  
 
-
-
-
+___
 [`Naming convention`](#contents)
 -
 ### [`Default naming convention`](https://docs.pytest.org/en/stable/explanation/goodpractices.html#conventions-for-python-test-discovery)
@@ -99,23 +98,23 @@ ___
 [`Re-run tests`](#contents)
 -
 #### Re-run last failed tests only
-```bash
+```
 pytest --lf, --last-failed 
 ```
 #### Re-run all tests, starting with last failed
-```bash
+```
 pytest --ff, --failed-first
 ```
 #### Stepwise (runs until the first failure and then stop; next time continue from first failed)
-```bash
+```
 pytest --sw, --stepwise
 ```
 #### Stepwise skip (ignores one failing test and stop test execution on the second failing test)
-```bash
+```
 pytest --sw-skip, --stepwise-skip
 ```
 #### Clearing cache content (removes all cache contents at start of test run)
-```bash
+```
 pytest --cache-clear
 ```
 **Pytest docs**: [`how to re-run failed tests`](https://docs.pytest.org/en/stable/how-to/cache.html#how-to-re-run-failed-tests-and-maintain-state-between-test-runs)
@@ -123,15 +122,15 @@ ___
 [`CLI flags`](#contents)
 -
 #### Increase verbosity (more detailed output)
-```bash
+```
 pytest -v, --verbose
 ```
 #### Decrease verbosity
-```bash
+```
 pytest -q, --quite
 ```
 #### Disable stdout capturing (prints shown in console)
-```bash
+```
 pytest -s, --capture=no
 ```
 #### Stop at first failure
@@ -139,15 +138,15 @@ pytest -s, --capture=no
 pytest -x, --exitfirst
 ```
 #### Collect tests without execution
-```bash
+```
 pytest --collect-only
 ```
 #### Show N slowest tests (N=0 for all)
-```bash
+```
 pytest --durations=N
 ```
 #### JUnitXML format files (can be read by Jenkins or other CI/CD tool):
-```bash
+```
 pytest --junit-xml=path
 ```
 **Pytest docs**: [`full list of command-line-flags`](https://docs.pytest.org/en/stable/reference/reference.html#command-line-flags)
@@ -163,7 +162,7 @@ ___
 
 **Code examples**: [`test_simple_fixture.py`](tests/02_fixtures/test_simple_fixture.py) [`test_inherited_fixture.py`](tests/03_fixtures_inherited/test_inherited_fixture.py)  
 **Pytest docs**: [`about fixtures`](https://docs.pytest.org/en/stable/explanation/fixtures.html#about-fixtures)
----
+___
 [`conftest.py`](#contents)
 -
 * Serves as a means of providing fixtures for an entire directory
