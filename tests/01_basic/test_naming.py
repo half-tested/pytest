@@ -11,9 +11,13 @@ def test_modulus():
 
 def test_addition():
     assert 2 + 2 != 4, "addition should work based on REQ-123"
+    print("Never do anything after assert. It will not be executed if assert fails.")
 
 
-# non-default naming conventions should be added to pytest.ini
+# non-default naming conventions should be added to pytest.ini:
+# python_files = test_*.py check_*.py
+# python_classes = Test Check
+# python_functions = test_* check_*
 def check_subtraction():
     assert 5 - 3 == 2
 

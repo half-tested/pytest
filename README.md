@@ -5,7 +5,7 @@ Pytest
 Contents
 -
 **&nbsp;&nbsp;&nbsp;** **1. Conventions:** **&nbsp;** **[`Naming convention`](#naming-convention)**__,__ **[`Test discovery`](#test-discovery)**__.__  
-**&nbsp;&nbsp;&nbsp;** **2. Test execution:** **&nbsp;** **[`Run tests`](#run-tests)**__,__ **[`Re-run tests`](#re-run-tests)**__,__ **[`CLI flags`](#cli-flags)**__.__  
+**&nbsp;&nbsp;&nbsp;** **2. Test execution:** **&nbsp;** **[`Run tests`](#run-tests)**__,__ **[`Deselecting tests`](#deselecting-tests)**__,__ **[`Re-run tests`](#re-run-tests)**__,__ **[`CLI flags`](#cli-flags)**__.__  
 **&nbsp;&nbsp;&nbsp;** **3. Fixtures:** **&nbsp;**  **[`What is fixture`](#what-is-fixture)**__,__**[`conftest.py`](#conftestpy)**__,__ **[`Fixtures scope`](#fixtures-scope)**__,__ **[`Autouse fixtures`](#autouse-fixtures)**__,__ **[`Fixtures order`](#fixtures-order)**__,__ **[`Built-in fixtures`](#built-in-fixtures)**__,__ **[`yield fixtures`](#combinatorics)**__.__  
 **&nbsp;&nbsp;&nbsp;** **4. Marks:** **&nbsp;**  **[`skip`](#skip-mark)**__,__ **[`skipif`](#skipif-mark)**__,__ **[`xfail mark`](#xfail-mark)**__,__ **[`usefixtures mark`](#usefixtures-mark)**__,__ **[`Registering marks`](#registering-marks)**__.__  
 **&nbsp;&nbsp;&nbsp;** **5. Parametrization:** **&nbsp;**  **[`Parametrize mark`](#parametrize-mark)**__,__ **[`Fixture parametrization`](#fixture-parametrization)**__,__ **[`pytest_generate_tests`](#pytestgeneratetests)**__.__  
@@ -31,7 +31,8 @@ python_functions = test_* check_*
 **Code examples**: [`test_class_naming.py`](tests/01_basic/test_class_naming.py) [`test_naming.py`](tests/01_basic/test_naming.py)
 ___
 [`Test discovery`](#contents)
---------------
+-
+Pytest search for the tests from current directory based on [`Naming convention`](#naming-convention). Directory with tests may be specified in `pytest.ini` configuration or 
 ### [`testpaths`](https://docs.pytest.org/en/stable/reference/reference.html#confval-testpaths)
 Sets list of directories that should be searched for tests when no specific directories, files or test ids are given in the command line when executing pytest from the rootdir directory
 ```ini
@@ -44,9 +45,6 @@ Set the directory basename patterns to avoid when recursing for test discovery. 
 [pytest]
 norecursedirs = .svn _build tmp*
 ```
-### [`Deselect tests during test collection`](https://docs.pytest.org/en/stable/example/pythoncollection.html#deselect-tests-during-test-collection)
-Tests can individually be deselected during collection by passing the `--deselect=item` option. For example, say `tests/foobar/test_foobar_01.py` contains `test_a` and `test_b`. You can run all of the tests within `tests/` except for `tests/foobar/test_foobar_01.py::test_a` by invoking pytest with `--deselect tests/foobar/test_foobar_01.py::test_a`. pytest allows multiple `--deselect` options.
-
 ### Prevent discovering specific Test classes
 To prevent pytest from discovering classes that start with `Test` by setting a boolean `__test__` attribute to `False`:
 ```python
@@ -57,30 +55,26 @@ class TestClass:
 ___
 [`Run tests`](#contents)
 ---------
-
-#### Run tests in a module 
+### Run tests in a module 
 ```bash
 pytest tests/01_basic/test_naming.py
 ```
-#### Run tests in a directory 
+### Run tests in a directory 
 ```bash
 pytest tests/01_basic/
 ```
-#### Run tests by keyword expressions
+### Run tests by keyword expressions
 This will run tests which contain names that match the given string expression (case-insensitive), which can include Python operators that use filenames, class names and function names as variables.
 ```bash
-# single test
-pytest -k "test_multiplication"
+pytest -k test_multiplication
 ```
 ```bash
-# entire class without specific test (may be few tests)
-pytest -k "TestNamingClass and not test_class_multiplication"
+pytest -k TestNamingClass
 ```
 ```bash
-# entire module without specific test (may be few tests)
-pytest -k "test_naming.py and not test_multiplication"
+pytest -k test_naming.py
 ```
-#### Run tests by node ids
+### Run tests by node ids
 Each collected test is assigned a unique nodeid which consist of the module filename followed by specifiers like class names, function names and parameters from parametrization, separated by `::` characters.
 ```bash
 pytest tests/01_basic/test_naming.py::test_multiplication
@@ -88,12 +82,50 @@ pytest tests/01_basic/test_naming.py::test_multiplication
 ```bash
 pytest tests/01_basic/test_class_naming.py::TestNamingClass::test_class_multiplication
 ```
-#### Run tests by marker expressions
-Will run all tests which are decorated by a mark. For example, with the `@pytest.mark.slow` decorator.
+### Run tests by marker expressions
+Will run all tests which are decorated by a mark. For example, with the `@pytest.mark.slow` mark.
 ```bash
-# deselect with '-m "not slow"'
 pytest -m slow
 ```
+**Pytest docs**: [`Specifying which tests to run`](https://docs.pytest.org/en/stable/how-to/usage.html#specifying-which-tests-to-run)  
+___
+[`Deselecting tests`](#contents)
+-
+### Ignore paths during test collection
+Ignore certain test directories and modules during collection by passing the `--ignore=path` option on the cli. Pytest allows multiple `--ignore` options.
+```
+pytest tests/01_basic --ignore=tests/01_basic/test_class_naming.py
+pytest tests/01_basic --ignore=tests/01_basic/subdir
+```
+### Ignore test file paths based on Unix shell-style wildcards
+The `--ignore-glob` option allows to ignore test file paths.
+```
+pytest tests/01_basic --ignore-glob='*class*'
+pytest tests/01_basic --ignore-glob="./*subdir/"
+pytest tests/01_basic --ignore-glob="./*subdir/" --ignore-glob="*class*"
+```
+### Deselect tests during test collection
+Tests can individually be deselected during collection by passing the `--deselect=item` option. Pytest allows multiple `--deselect` options.
+```
+pytest tests/01_basic/subdir --deselect=tests/01_basic/subdir/test_in_subdir.py::test_two_in_subdir
+pytest tests/01_basic --deselect=tests/01_basic/test_class_naming.py
+pytest tests/01_basic --deselect=tests/01_basic/subdir
+```
+### Deselect tests by keyword expressions
+This will run tests which contain names that match the given string expression (case-insensitive), which can include Python operators that use filenames, class names and function names as variables.
+```
+pytest -k "test_naming.py and not test_addition"
+pytest -k "test_class_naming.py and not test_class_multiplication"
+```
+```
+pytest tests/01_basic -m "not slow"
+```
+### Deselect based on mark
+Marked tests may be deselected with `-m` option
+```
+pytest -m 'not slow'
+```
+**Pytest docs**: [`Deselecting paths and tests`](https://docs.pytest.org/en/7.3.x/example/pythoncollection.html)  
 ___
 [`Re-run tests`](#contents)
 -
@@ -134,7 +166,7 @@ pytest -q, --quite
 pytest -s, --capture=no
 ```
 #### Stop at first failure
-```bash
+```
 pytest -x, --exitfirst
 ```
 #### Collect tests without execution
@@ -354,6 +386,10 @@ testpaths =
 ```ini
 [pytest]
 addopts = --maxfail=2  # exit after 2 failures
+```
+Alternatively, may set a `PYTEST_ADDOPTS` environment variable to add command line options while the environment is in use:
+```
+export PYTEST_ADDOPTS="-v"
 ```
 #### Add fixtures that will be applied to all test functions according to defined scope
 ```ini
