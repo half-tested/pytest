@@ -150,6 +150,9 @@ pytest --cache-clear
 ___
 [`CLI flags`](#contents)
 -
+```bash
+pytest -h   # prints options and config file settings
+```
 #### Increase verbosity (more detailed output)
 ```
 pytest -v, --verbose
