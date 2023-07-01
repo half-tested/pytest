@@ -117,13 +117,10 @@ This will run tests which contain names that match the given string expression (
 pytest -k "test_naming.py and not test_addition"
 pytest -k "test_class_naming.py and not test_class_multiplication"
 ```
-```
-pytest tests/01_basic -m "not slow"
-```
 ### Deselect based on mark
 Marked tests may be deselected with `-m` option
 ```
-pytest -m 'not slow'
+pytest tests/01_basic -m "not slow"
 ```
 **Pytest docs**: [`Deselecting paths and tests`](https://docs.pytest.org/en/7.3.x/example/pythoncollection.html)  
 ___
