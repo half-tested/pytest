@@ -247,8 +247,10 @@ ___
 * package - the fixture is destroyed during teardown of the last test in the package
 * session - the fixture is destroyed at the end of the test session
 
-**Code examples**: [`test_fixture_function_scope.py`](tests/05_fixtures_scope/01_function_scope/test_fixture_function_scope.py) [`test_fixture_class_scope.py`](tests/05_fixtures_scope/02_class_scope/test_fixture_class_scope.py) [`test_fixture_module_scope.py`](tests/05_fixtures_scope/03_module_scope/test_fixture_module_scope.py) [`test_01_fixture_package_scope.py`](tests/05_fixtures_scope/04_package_scope/test_01_fixture_package_scope.py) [`test_01_fixture_session_scope.py`](tests/05_fixtures_scope/05_session_scope/01_package/test_01_fixture_session_scope.py)  
-**Pytest docs**: [`about fixtures scope`](https://docs.pytest.org/en/stable/how-to/fixtures.html#fixture-scopes)
+**Code examples**: 
+[`fixtures scope tests`](tests/05_fixtures_scope)  
+**Pytest docs**: 
+[`about fixtures scope`](https://docs.pytest.org/en/stable/how-to/fixtures.html#fixture-scopes)  
 ___
 [`Autouse fixtures`](#contents)
 -
