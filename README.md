@@ -246,7 +246,11 @@ ___
 * module - the fixture is destroyed during teardown of the last test in the module
 * package - the fixture is destroyed during teardown of the last test in the package
 * session - the fixture is destroyed at the end of the test session
-
+```
+@pytest.fixture(scope='session')
+def session_scope_fixture():
+  return 'content of session scope feature'
+```
 **Code examples**: 
 [`fixtures scope tests`](tests/05_fixtures_scope)  
 **Pytest docs**: 
@@ -258,9 +262,15 @@ ___
 * Cut out a lot of redundant requests
 * Provide more advanced fixture usage
 * autouse=True makes a fixture configured for autouse
-
-**Code examples**: [`test_autouse_fixtures.py`](tests/06_autouse_fixtures/test_autouse_fixtures.py)  
-**Pytest docs**: [`about autouse fixtures`](https://docs.pytest.org/en/stable/how-to/fixtures.html#autouse-fixtures-fixtures-you-don-t-have-to-request)
+```
+@pytest.fixture(autouse=True)
+def auto_used_fixture():
+    retrun 'auto used feature content'
+```
+**Code examples**: 
+[`test_autouse_fixtures.py`](tests/06_autouse_fixtures/test_autouse_fixtures.py)  
+**Pytest docs**: 
+[`about autouse fixtures`](https://docs.pytest.org/en/stable/how-to/fixtures.html#autouse-fixtures-fixtures-you-don-t-have-to-request)  
 ___
 [`Fixtures order`](#contents)
 -
