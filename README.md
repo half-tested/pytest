@@ -287,19 +287,35 @@ ___
 ___
 [`Built-in fixtures`](#contents)
 -
-#### [`tmp_path`](https://docs.pytest.org/en/stable/how-to/tmp_path.html#the-tmp-path-fixture) and [`tmp_path_factory`](https://docs.pytest.org/en/stable/how-to/tmp_path.html#the-tmp-path-factory-fixture)
-Temporary directory unique to the test invocation and session-scope  
-**Code examples**: [`test_01_tmp_path.py`](tests/08_built_in_fixtures/01_temp_directory/test_01_tmp_path.py) [`test_02_tmp_path_factory.py`](tests/08_built_in_fixtures/01_temp_directory/test_02_tmp_path_factory.py)  
-#### [`request`](https://docs.pytest.org/en/stable/reference/reference.html#request)
+### tmp_path and tmp_path_factory
+* tmp_path temporary directory unique to the test invocation and session-scope
+* tmp_path_factory is a session-scope fixture provides temporary directory during all test run
+```ini
+[pytest]
+;set how many sessions should we keep the tmp_path directories (default 3)
+tmp_path_retention_count = 5
+
+;control which directories created by the tmp_path fixture are kept around, based on test outcome (default all)
+;  * all: retains directories for all tests, regardless of the outcome
+;  * failed: retains directories only for tests with outcome error or failed
+;  * none: directories are always removed after each test ends, regardless of the outcome
+tmp_path_retention_policy = "failed"
+```
+**Code examples**:
+[`test_01_tmp_path.py`](tests/08_built_in_fixtures/01_temp_directory/test_01_tmp_path.py) 
+[`test_02_tmp_path_factory.py`](tests/08_built_in_fixtures/01_temp_directory/test_02_tmp_path_factory.py)  
+**Pytest docs**: 
+[`tmp_path`](https://docs.pytest.org/en/stable/how-to/tmp_path.html#the-tmp-path-fixture) and [`tmp_path_factory`](https://docs.pytest.org/en/stable/how-to/tmp_path.html#the-tmp-path-factory-fixture)
+### [`request`](https://docs.pytest.org/en/stable/reference/reference.html#request)
 Provide information on the executing test function  
 **Code examples**: [`test_request_fixture.py`](tests/08_built_in_fixtures/02_request/test_request_fixture.py)
-#### [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html)
+### [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html)
 Has helper methods for safely patching and mocking functionality in tests  
 **Code examples**: [`test_monkeypatch_setattr.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setattr.py) [`test_monkeypatch_setenv.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setenv.py) [`test_monkeypatch_setitem.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setitem.py)
-#### [`cache`](https://docs.pytest.org/en/stable/reference/reference.html#std-fixture-cache)
+### [`cache`](https://docs.pytest.org/en/stable/reference/reference.html#std-fixture-cache)
 Store and retrieve values across pytest runs  
 **Code examples**: [`test_config_cache.py`](tests/08_built_in_fixtures/04_config_cache/test_config_cache.py)  
-#### [`and other built-in fixtures...`](https://docs.pytest.org/en/stable/reference/fixtures.html#built-in-fixtures)
+### [`and other built-in fixtures...`](https://docs.pytest.org/en/stable/reference/fixtures.html#built-in-fixtures)
 Capture output or logs; record extra properties; record warnings etc.
 ___
 [`yield fixtures`](#contents)

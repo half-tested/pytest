@@ -1,5 +1,3 @@
-import pytest
-
 """Modifying the values of dictionaries e.g. you have a global
 configuration that you want to modify for certain test cases"""
 DEFAULT_CONFIG = {"user": "user1", "database": "db1"}
