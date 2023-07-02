@@ -185,25 +185,59 @@ pytest --junit-xml=path
 ___
 [`What is fixture`](#contents)
 -
+### Purpose of fixture
 * Provides a defined, reliable and consistent context for the tests
 * Is a function decorated with @pytest.fixture
 * Used to design preconditions and postconditions
 * Can be reused over tests
 * Multiple fixtures may be used for test
 * Sharing test data between tests
+### Fixture example
+```python
+@pytest.fixture
+def message():
+    return 'fixture content'
 
-**Code examples**: [`test_simple_fixture.py`](tests/02_fixtures/test_simple_fixture.py) [`test_inherited_fixture.py`](tests/03_fixtures_inherited/test_inherited_fixture.py)  
-**Pytest docs**: [`about fixtures`](https://docs.pytest.org/en/stable/explanation/fixtures.html#about-fixtures)
+def test_has_fixture(message):
+    assert message == 'fixture content'
+```
+### Fixture flags
+```
+# Show what fixtures and tests would be executed but don't execute anything
+pytest tests/02_fixtures/test_simple_fixture.py --setup-plan
+
+# Only setup fixtures, do not execute tests
+pytest tests/02_fixtures/test_simple_fixture.py --setup-only
+
+# Show setup of fixtures while executing tests
+pytest tests/02_fixtures/test_simple_fixture.py --setup-show
+```
+**Code examples**: 
+[`test_simple_fixture.py`](tests/02_fixtures/test_simple_fixture.py) 
+[`test_inherited_fixture.py`](tests/03_fixtures_inherited/test_inherited_fixture.py)  
+**Pytest docs**: 
+[`about fixtures`](https://docs.pytest.org/en/stable/explanation/fixtures.html#about-fixtures)  
 ___
 [`conftest.py`](#contents)
 -
+### Purpose of conftest
 * Serves as a means of providing fixtures for an entire directory
 * No need to do import for any test in same package
 * Multiple conftest.py may be used as for root and sub-directories
 * Defined fixtures may be overwritten in sub-directories
+### Conftest flags
+```
+# Only load conftest.py's relative to specified dir
+pytest tests/04_conftest/subdir/test_subdir_conftest.py --confcutdir=tests/04_conftest/subdir
 
-**Code examples**: [`test_conftest.py`](tests/04_conftest/test_conftest.py) [`test_subdir_conftest.py`](tests/04_conftest/subdir/test_subdir_conftest.py)  
-**Pytest docs**: [`about conftest.py`](https://docs.pytest.org/en/stable/reference/fixtures.html#conftest-py-sharing-fixtures-across-multiple-files)
+# Don't load any conftest.py files
+pytest tests/04_conftest --noconftest
+```
+**Code examples**: 
+[`test_conftest.py`](tests/04_conftest/test_conftest.py) 
+[`test_subdir_conftest.py`](tests/04_conftest/subdir/test_subdir_conftest.py)  
+**Pytest docs**: 
+[`about conftest.py`](https://docs.pytest.org/en/stable/reference/fixtures.html#conftest-py-sharing-fixtures-across-multiple-files)  
 ___
 [`Fixtures scope`](#contents)
 -
