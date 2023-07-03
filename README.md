@@ -126,27 +126,32 @@ pytest tests/01_basic -m "not slow"
 ___
 [`Re-run tests`](#contents)
 -
-#### Re-run last failed tests only
+### Re-run last failed tests only
 ```
 pytest --lf, --last-failed 
 ```
-#### Re-run all tests, starting with last failed
+### Re-run all tests, starting with last failed
 ```
 pytest --ff, --failed-first
 ```
-#### Stepwise (runs until the first failure and then stop; next time continue from first failed)
+### Stepwise (runs until the first failure and then stop; next time continue from first failed)
 ```
 pytest --sw, --stepwise
 ```
-#### Stepwise skip (ignores one failing test and stop test execution on the second failing test)
+### Stepwise skip (ignores one failing test and stop test execution on the second failing test)
 ```
 pytest --sw-skip, --stepwise-skip
 ```
-#### Clearing cache content (removes all cache contents at start of test run)
+### Clearing cache content (removes all cache contents at start of test run)
 ```
 pytest --cache-clear
 ```
-**Pytest docs**: [`how to re-run failed tests`](https://docs.pytest.org/en/stable/how-to/cache.html#how-to-re-run-failed-tests-and-maintain-state-between-test-runs)
+### Show cache content
+```
+pytest --cache-show
+```
+**Pytest docs**: 
+[`how to re-run failed tests`](https://docs.pytest.org/en/stable/how-to/cache.html#how-to-re-run-failed-tests-and-maintain-state-between-test-runs)  
 ___
 [`CLI flags`](#contents)
 -
@@ -337,8 +342,10 @@ ___
 * Any teardown code for that fixture is placed after the yield
 * Once the test is finished, pytest will go back down the list of fixtures, but in the reverse order, taking each one that yielded, and running the code inside it that was after the yield statement.
 
-**Code examples**: [`test_yield_fixture.py`](tests/09_yield_fixtures/test_yield_fixture.py)  
-**Pytest docs**: [`about yield fixtures`](https://docs.pytest.org/en/stable/how-to/fixtures.html#yield-fixtures-recommended)
+**Code examples**: 
+[`test_yield_fixture.py`](tests/09_yield_fixtures/test_yield_fixture.py)  
+**Pytest docs**: 
+[`about yield fixtures`](https://docs.pytest.org/en/stable/how-to/fixtures.html#yield-fixtures-recommended)
 ___
 [`skip mark`](#contents)
 -
@@ -422,7 +429,7 @@ def smtp_connection(request):
 ___
 [`pytest_generate_tests`](#contents)
 -
-Pytest hook to dynamically generate tests. For example based on command-line options:
+Pytest hook which is called when collecting a test function. Can be used to dynamically generate tests. For example based on command-line options:
 ```python
 # content of conftest.py
 def pytest_addoption(parser):
