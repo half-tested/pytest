@@ -2,4 +2,4 @@ pytest
 assertpy
 pytest-rerunfailures
 pytest-xdist
-filelock
+requests

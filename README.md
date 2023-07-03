@@ -306,17 +306,30 @@ tmp_path_retention_policy = "failed"
 [`test_02_tmp_path_factory.py`](tests/08_built_in_fixtures/01_temp_directory/test_02_tmp_path_factory.py)  
 **Pytest docs**: 
 [`tmp_path`](https://docs.pytest.org/en/stable/how-to/tmp_path.html#the-tmp-path-fixture) and [`tmp_path_factory`](https://docs.pytest.org/en/stable/how-to/tmp_path.html#the-tmp-path-factory-fixture)
-### [`request`](https://docs.pytest.org/en/stable/reference/reference.html#request)
-Provide information on the executing test function  
-**Code examples**: [`test_request_fixture.py`](tests/08_built_in_fixtures/02_request/test_request_fixture.py)
-### [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html)
-Has helper methods for safely patching and mocking functionality in tests  
-**Code examples**: [`test_monkeypatch_setattr.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setattr.py) [`test_monkeypatch_setenv.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setenv.py) [`test_monkeypatch_setitem.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setitem.py)
-### [`cache`](https://docs.pytest.org/en/stable/reference/reference.html#std-fixture-cache)
+### request
+Provide information on the executing test function such as passed arguments, pytest configuration, fixtures etc.  
+**Code examples**: 
+[`test_request_fixture.py`](tests/08_built_in_fixtures/02_request/test_request_fixture.py)  
+**Pytest docs**: 
+[`request`](https://docs.pytest.org/en/stable/reference/reference.html#request)  
+### monkeypatch
+Has helper methods for safely patching and mocking functionality in tests. Change current directory, update environment variables, mock object attributes (may be useful for mock api or any class methods).  
+**Code examples**: 
+[`test_monkeypatch_setattr.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setattr.py) 
+[`test_monkeypatch_setenv.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setenv.py) 
+[`test_monkeypatch_setitem.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setitem.py)  
+**Pytest docs**: 
+[`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html)  
+### cache
 Store and retrieve values across pytest runs  
-**Code examples**: [`test_config_cache.py`](tests/08_built_in_fixtures/04_config_cache/test_config_cache.py)  
-### [`and other built-in fixtures...`](https://docs.pytest.org/en/stable/reference/fixtures.html#built-in-fixtures)
+**Code examples**: 
+[`test_config_cache.py`](tests/08_built_in_fixtures/04_config_cache/test_config_cache.py)  
+**Pytest docs**: 
+[`cache`](https://docs.pytest.org/en/stable/reference/reference.html#std-fixture-cache)  
+### and other built-in fixtures...
 Capture output or logs; record extra properties; record warnings etc.
+**Pytest docs**: 
+[`built-in fixtures`](https://docs.pytest.org/en/stable/reference/fixtures.html#built-in-fixtures)
 ___
 [`yield fixtures`](#contents)
 -

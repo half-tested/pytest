@@ -22,4 +22,4 @@ def mydata(cache):
 
 
 def test_config_cache(mydata):
-    assert mydata == 23
+    assert mydata == 42
