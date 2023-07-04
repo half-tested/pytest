@@ -1,12 +1,15 @@
 import pytest
 
 
-@pytest.fixture(params=[("3+5", 8), ("2+4", 6)], ids=["sum check: 3+5=8", "sum check: 2+4=6"])
+@pytest.fixture(
+    params=[("3+5", 8), ("2+4", 6)],
+    ids=["sum check: 3+5=8", "sum check: 2+4=6"]
+)
 def fixture_sum(request):
     return request.param
 
 
-def test_sum(fixture_sum):
+def test_fixture_param_simple(fixture_sum):
     assert eval(fixture_sum[0]) == fixture_sum[1]
 
 
@@ -23,13 +26,15 @@ def test_sum_list(number_list):
     assert sum(numbers) == expected_sum
 
 
-@pytest.fixture(params=[
-    {"numbers": [1, 2, 3], "expected_sum": 6},
-    {"numbers": [4, 5, 6], "expected_sum": 15},
-], ids=[
-    "sum of 1, 2, 3",
-    "sum of 4, 5, 6",
-])
+@pytest.fixture(
+    params=[
+        {"numbers": [1, 2, 3], "expected_sum": 6},
+        {"numbers": [4, 5, 6], "expected_sum": 15}
+    ],
+    ids=[
+        "sum of 1, 2, 3",
+        "sum of 4, 5, 6"]
+)
 def number_list_key_val(request):
     return request.param
 

@@ -449,30 +449,62 @@ ___
 [pytest]
 markers =
     slow: marks tests as slow (deselect with '-m "not slow"')
-    serial
+    integration
 ```
 #### Custom marks can be registered programmatically in a pytest_configure hook
 ```python
+# conftest.py
 def pytest_configure(config):
-    config.addinivalue_line(
-        "markers", "env(name): mark test to run only on named environment"
-    )
+    config.addinivalue_line("markers", "slow: too slow test")
+    config.addinivalue_line("markers", "integration: service integration")
 ```
-**Code examples**: 
-[`test_marks_with_parametrize.py`](tests/10_bult_in_marks/05_with_parametrize/test_marks_with_parametrize.py)  
 **Pytest docs**: 
 [`about registering marks`](https://docs.pytest.org/en/stable/how-to/mark.html#registering-marks)  
 ___
 [`Parametrize mark`](#contents)
 -
-The builtin pytest.mark.parametrize decorator enables parametrization of arguments for a test function.
+### Parametrize test
+The builtin `pytest.mark.parametrize` decorator enables parametrization of arguments for a test function.
 ```python
 @pytest.mark.parametrize("test_input,expected", [("3+5", 8), ("2+4", 6)])
 def test_eval(test_input, expected):
     assert eval(test_input) == expected
 ```
-**Code examples**: [`test_parametrize_by_mark.py`](tests/11_parametrize/01_mark/test_parametrize_by_mark.py) [`test_parametrize_module_by_mark.py`](tests/11_parametrize/01_mark/test_parametrize_module_by_mark.py)  
-**Pytest docs**: [`about @pytest.mark.parametrize`](https://docs.pytest.org/en/stable/how-to/parametrize.html#pytest-mark-parametrize-parametrizing-test-functions)
+Parametrize marker parameters:
+ * argnames - a comma-separated string denoting one or more argument names, or a list/tuple of argument strings.
+ * argvalues - the list of values for each argument
+ * ids - id for each argument includes in test name
+```python
+@pytest.mark.parametrize(
+    argnames="test_input,expected",
+    argvalues=[("3+5", 8), ("2+4", 6)],
+    ids=["sum check: 3+5=8", "sum check: 2+4=6"]
+)
+def test_param_with_ids(test_input, expected):
+    assert eval(test_input) == expected
+```
+Parametrize from dictionary:
+```python
+params = {
+    "argnames": "test_input,expected",
+    "argvalues": [("3+5", 8), ("2+4", 6)],
+    "ids": ["sum check: 3+5=8", "sum check: 2+4=6"]
+}
+
+@pytest.mark.parametrize(**params)
+def test_param_by_dict(test_input, expected):
+    assert eval(test_input) == expected
+```
+### Parametrize module
+Declaring `pytest.mark.parametrize` will parametrize all test functions and classes in given test file.
+```python
+pytestmark = pytest.mark.parametrize("n,expected", [(1, 2), (3, 4)])
+```
+**Code examples**: 
+[`test_parametrize_by_mark.py`](tests/11_parametrize/01_mark/test_parametrize_by_mark.py) 
+[`test_parametrize_module_by_mark.py`](tests/11_parametrize/01_mark/test_parametrize_module_by_mark.py)  
+**Pytest docs**: 
+[`about @pytest.mark.parametrize`](https://docs.pytest.org/en/stable/how-to/parametrize.html#pytest-mark-parametrize-parametrizing-test-functions)  
 ___
 [`Fixture parametrization`](#contents)
 -
