@@ -7,5 +7,5 @@ mode_filter = pytest.mark.skipif(
 
 
 @mode_filter
-def test_function():
+def test_skipped_by_created_marker():
     pass

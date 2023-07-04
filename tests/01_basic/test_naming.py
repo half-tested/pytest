@@ -50,3 +50,10 @@ def test_is_in():
 @pytest.mark.slow
 def test_is_not_in():
     assert "d" not in "abc"
+
+
+def test_floating_point():
+    assert 0.1 + 0.2 != 0.3
+    assert 0.1 + 0.2 == pytest.approx(0.3)  # approx function performs floating-point comparisons
+    assert (0.1 + 0.2, 0.2 + 0.4) == pytest.approx((0.3, 0.6))
+    assert {'a': 0.1 + 0.2, 'b': 0.2 + 0.4} == pytest.approx({'a': 0.3, 'b': 0.6})

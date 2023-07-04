@@ -5,9 +5,9 @@ import pytest
 pytestmark = pytest.mark.skipif(sys.platform != "win32", reason="tests for windows only")
 
 
-def test_to_skip():
+def test_skipped_by_module_scope_mark():
     pass
 
 
-def test_another_skip():
+def test_two_skipped_by_module_scope_mark():
     pass

@@ -341,7 +341,15 @@ ___
 * `return` is swapped out for `yield`
 * Any teardown code for that fixture is placed after the yield
 * Once the test is finished, pytest will go back down the list of fixtures, but in the reverse order, taking each one that yielded, and running the code inside it that was after the yield statement.
-
+```python
+@pytest.fixture
+def mail_box():
+    # setup/preconditions:
+    box = MailBox()
+    yield box
+    # teardown/postconditions:
+    box.clear()
+```
 **Code examples**: 
 [`test_yield_fixture.py`](tests/09_yield_fixtures/test_yield_fixture.py)  
 **Pytest docs**: 
@@ -351,37 +359,88 @@ ___
 -
 The simplest way to skip a test function is to mark it with the skip decorator which may be passed an optional reason.  
 ```python
-@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.skip(reason="requirements changes CHN-123")
+def test_with_skip_mark():
+    pass
 ```
-**Code examples**: [`test_skip.py`](tests/11_bult_in_marks/01_skip/test_skip.py) [`test_skip_all_test_in_module.py`](tests/11_bult_in_marks/01_skip/test_skip_all_test_in_module.py) [`test_skip_imperatively.py`](tests/11_bult_in_marks/01_skip/test_skip_imperatively.py) [`test_skip_imperatively_all_module.py`](tests/11_bult_in_marks/01_skip/test_skip_imperatively_all_module.py)  
-**Pytest docs**: [`about skip mark`](https://docs.pytest.org/en/stable/how-to/skipping.html#skipping-test-functions)
+See all approaches of how to skip a test in code examples.  
+**Code examples**: 
+[`test_skip.py`](tests/10_bult_in_marks/01_skip/test_skip.py) 
+[`test_skip_all_test_in_module.py`](tests/10_bult_in_marks/01_skip/test_skip_all_test_in_module.py) 
+[`test_skip_imperatively.py`](tests/10_bult_in_marks/01_skip/test_skip_imperatively.py) 
+[`test_skip_imperatively_all_module.py`](tests/10_bult_in_marks/01_skip/test_skip_imperatively_all_module.py)  
+[`test_skip_imperatively_from_fixture.py`](tests/10_bult_in_marks/01_skip/test_skip_imperatively_from_fixture.py)  
+**Pytest docs**: 
+[`about skip mark`](https://docs.pytest.org/en/stable/how-to/skipping.html#skipping-test-functions)  
 ___
 [`skipif mark`](#contents)
 -
 Skip test conditionally. If the condition evaluates to True during collection, the test function will be skipped.  
 ```python
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10")
+def test_with_skipif_mark():
+    pass
 ```
-**Code examples**: [`test_skipif.py`](tests/11_bult_in_marks/02_skipif/test_skipif.py) [`test_skipif_all_test_in_module.py`](tests/11_bult_in_marks/02_skipif/test_skipif_all_test_in_module.py) [`test_skipif_defined_mark.py`](tests/11_bult_in_marks/02_skipif/test_skipif_defined_mark.py) [`test_skipif_defined_mark_outside.py`](tests/11_bult_in_marks/02_skipif/test_skipif_defined_mark_outside.py) [`test_skipif_evaluated_condition.py`](tests/11_bult_in_marks/02_skipif/test_skipif_evaluated_condition.py)  
-**Pytest docs**: [`about skipif mark`](https://docs.pytest.org/en/stable/how-to/skipping.html#id1)
+**Code examples**: 
+[`test_skipif.py`](tests/10_bult_in_marks/02_skipif/test_skipif.py) 
+[`test_skipif_all_test_in_module.py`](tests/10_bult_in_marks/02_skipif/test_skipif_all_test_in_module.py) 
+[`test_skipif_defined_mark.py`](tests/10_bult_in_marks/02_skipif/test_skipif_defined_mark.py) 
+[`test_skipif_defined_mark_outside.py`](tests/10_bult_in_marks/02_skipif/test_skipif_defined_mark_outside.py) 
+**Pytest docs**: 
+[`about skipif mark`](https://docs.pytest.org/en/stable/how-to/skipping.html#id1)  
 ___
 [`xfail mark`](#contents)
 -
-The xfail marker indicates a test expect to fail.
+### The xfail marker indicates a test expect to fail.
 ```python
-@pytest.mark.xfail(reason="known parser issue")
+@pytest.mark.xfail(reason="BUG-123")
+def test_with_xfail_mark():
+    pass
 ```
-**Code examples**: [`test_xfail.py`](tests/11_bult_in_marks/03_xfail/test_xfail.py) [`test_xfail_condition.py`](tests/11_bult_in_marks/03_xfail/test_xfail_condition.py) [`test_xfail_ignore_mark.py`](tests/11_bult_in_marks/03_xfail/test_xfail_ignore_mark.py) [`test_xfail_no_run.py`](tests/11_bult_in_marks/03_xfail/test_xfail_no_run.py)  
-**Pytest docs**: [`about xfail mark`](https://docs.pytest.org/en/stable/how-to/skipping.html#xfail-mark-test-functions-as-expected-to-fail)
+### Flag --runxfail
+Force the running and reporting of an xfail marked test as if it weren’t marked at all. 
+This also causes pytest.xfail() to produce no effect.  
+### Parameter strict 
+Both XFAIL and XPASS don’t fail the test suite by default. This setting can be changed by setting the strict keyword-only parameter to True.
+```python
+@pytest.mark.xfail(strict=True)
+def test_function():
+    pass
+```
+This will make XPASS (“unexpectedly passing”) results from this test to fail the test suite.
+Parameter strict can be configured in pytest.ini:
+```ini
+xfail_strict=true
+```
+**Code examples**: 
+[`test_xfail.py`](tests/10_bult_in_marks/03_xfail/test_xfail.py) 
+[`test_xfail_condition.py`](tests/10_bult_in_marks/03_xfail/test_xfail_condition.py) 
+[`test_xfail_ignore_mark.py`](tests/10_bult_in_marks/03_xfail/test_xfail_ignore_mark.py) 
+[`test_xfail_no_run.py`](tests/10_bult_in_marks/03_xfail/test_xfail_no_run.py)  
+**Pytest docs**: 
+[`about xfail mark`](https://docs.pytest.org/en/stable/how-to/skipping.html#xfail-mark-test-functions-as-expected-to-fail)  
 ___
 [`usefixtures mark`](#contents)
 -
-Mark a test function as using the given fixture names.
+### Mark a test function as using the given fixture names
 ```python
 @pytest.mark.usefixtures("perform_config")
+def test_with_usefixtures_mark():
+    pass
 ```
-**Code examples**: [`test_usefixtures.py`](tests/11_bult_in_marks/04_usefixtures/test_usefixtures.py)  
-**Pytest docs**: [`about usefixtures mark`](https://docs.pytest.org/en/stable/how-to/fixtures.html#usefixtures)  
+### Other options to use usefixtures
+```
+1. May specify fixture usage at the test module level using pytestmark:
+    pytestmark = pytest.mark.usefixtures("precondition_one", "precondition_two")
+
+2. It is also possible to put fixtures required by all tests in your project into pytest.ini:
+    [pytest]
+    usefixtures = precondition_one precondition_two
+```
+**Code examples**: 
+[`test_usefixtures.py`](tests/10_bult_in_marks/04_usefixtures/test_usefixtures.py)  
+**Pytest docs**: 
+[`about usefixtures mark`](https://docs.pytest.org/en/stable/how-to/fixtures.html#usefixtures)  
 ___
 [`Registering marks`](#contents)
 -
@@ -399,8 +458,10 @@ def pytest_configure(config):
         "markers", "env(name): mark test to run only on named environment"
     )
 ```
-**Code examples**: [`test_marks_with_parametrize.py`](tests/11_bult_in_marks/05_with_parametrize/test_marks_with_parametrize.py)  
-**Pytest docs**: [`about registering marks`](https://docs.pytest.org/en/stable/how-to/mark.html#registering-marks)
+**Code examples**: 
+[`test_marks_with_parametrize.py`](tests/10_bult_in_marks/05_with_parametrize/test_marks_with_parametrize.py)  
+**Pytest docs**: 
+[`about registering marks`](https://docs.pytest.org/en/stable/how-to/mark.html#registering-marks)  
 ___
 [`Parametrize mark`](#contents)
 -
