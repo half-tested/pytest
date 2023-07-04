@@ -1,10 +1,9 @@
 import pytest
-import number_util
 
 
 @pytest.mark.parametrize(
     "test_input,expected",
-    [("3+5", 8), ("2+4", 6), ("6*9", 42), (number_util.ten(), 10)]
+    [("3+5", 8), ("2+4", 6), ("6*9", 42)]
 )
 def test_param_simple(test_input, expected):
     assert eval(test_input) == expected

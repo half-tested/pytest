@@ -7,6 +7,8 @@ def pytest_addoption(parser):
     )
 
 
+# hook is called when collecting a test function
 def pytest_generate_tests(metafunc):
+    # if test has fixture then parametrize
     if "stringinput" in metafunc.fixturenames:
         metafunc.parametrize("stringinput", metafunc.config.getoption("stringinput"))

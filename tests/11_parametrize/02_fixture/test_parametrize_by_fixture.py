@@ -21,7 +21,7 @@ def number_list(request):
     return request.param
 
 
-def test_sum_list(number_list):
+def test_param_fixture_sum_list(number_list):
     numbers, expected_sum = number_list
     assert sum(numbers) == expected_sum
 
@@ -39,7 +39,7 @@ def number_list_key_val(request):
     return request.param
 
 
-def test_sum_key_val(number_list_key_val):
+def test_param_fixture_sum_key_val(number_list_key_val):
     numbers = number_list_key_val["numbers"]
     expected_sum = number_list_key_val["expected_sum"]
     assert sum(numbers) == expected_sum

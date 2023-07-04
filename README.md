@@ -517,8 +517,10 @@ def smtp_connection(request):
     print(f"finalizing {smtp_connection}")
     smtp_connection.close()
 ```
-**Code examples**: [`test_parametrize_by_fixture.py`](tests/11_parametrize/02_fixture/test_parametrize_by_fixture.py)  
-**Pytest docs**: [`about fixture parametrization`](https://docs.pytest.org/en/stable/how-to/fixtures.html#fixture-parametrize)  
+**Code examples**: 
+[`test_parametrize_by_fixture.py`](tests/11_parametrize/02_fixture/test_parametrize_by_fixture.py)  
+**Pytest docs**: 
+[`about fixture parametrization`](https://docs.pytest.org/en/stable/how-to/fixtures.html#fixture-parametrize)  
 ___
 [`pytest_generate_tests`](#contents)
 -
@@ -535,17 +537,18 @@ def pytest_addoption(parser):
 
 
 def pytest_generate_tests(metafunc):
-    if "stringinput" in metafunc.fixturenames:
+  # if test using fixture then 
+    if "stringinput" in metafunc.fixturenames: 
         metafunc.parametrize("stringinput", metafunc.config.getoption("stringinput"))
 
-# content of test_parametrize_by_generate.py
+# content of test file:
 def test_parametrize_by_generate(stringinput):
     assert stringinput.isalpha()
-
-# pytest tests/11_parametrize/03_generate/test_parametrize_by_generate.py --stringinput="hello" --stringinput="world" --stringinput="4317" -v
 ```
-**Code examples**: [`test_parametrize_by_generate.py`](tests/11_parametrize/03_generate/test_parametrize_by_generate.py)  
-**Pytest docs**: [`about pytest_generate_tests`](https://docs.pytest.org/en/stable/how-to/parametrize.html#pytest-generate-tests)
+**Code examples**: 
+[`test_parametrize_by_generate.py`](tests/11_parametrize/03_generate/test_parametrize_by_generate.py)  
+**Pytest docs**: 
+[`about pytest_generate_tests`](https://docs.pytest.org/en/stable/how-to/parametrize.html#pytest-generate-tests)  
 ___
 [`pytest.ini`](#contents)
 -

@@ -6,7 +6,7 @@ import pytest
     ("n", "expected"),
     [
         (1, 2),
-        pytest.param(1, 0, marks=[pytest.mark.xfail, pytest.mark.specific_setup]),
+        pytest.param(1, 0, marks=[pytest.mark.xfail, pytest.mark.slow]),
         pytest.param(1, 3, marks=pytest.mark.xfail(reason="some bug")),
         (2, 3),
         (3, 4),
