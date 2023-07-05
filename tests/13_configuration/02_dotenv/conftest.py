@@ -2,10 +2,6 @@ import pytest
 import os
 
 
-def project_path(request):
-    return request.session.fspath.strpath
-
-
 @pytest.fixture()
 def user():
     test_user_username = os.environ["test_user_username"]

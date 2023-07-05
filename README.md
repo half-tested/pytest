@@ -8,7 +8,7 @@ Contents
 **&nbsp;&nbsp;&nbsp;** **2. Test execution:** **&nbsp;** **[`Run tests`](#run-tests)**__,__ **[`Deselecting tests`](#deselecting-tests)**__,__ **[`Re-run tests`](#re-run-tests)**__,__ **[`CLI flags`](#cli-flags)**__.__  
 **&nbsp;&nbsp;&nbsp;** **3. Fixtures:** **&nbsp;**  **[`What is fixture`](#what-is-fixture)**__,__**[`conftest.py`](#conftestpy)**__,__ **[`Fixtures scope`](#fixtures-scope)**__,__ **[`Autouse fixtures`](#autouse-fixtures)**__,__ **[`Fixtures order`](#fixtures-order)**__,__ **[`Built-in fixtures`](#built-in-fixtures)**__,__ **[`yield fixtures`](#combinatorics)**__.__  
 **&nbsp;&nbsp;&nbsp;** **4. Marks:** **&nbsp;**  **[`skip`](#skip-mark)**__,__ **[`skipif`](#skipif-mark)**__,__ **[`xfail mark`](#xfail-mark)**__,__ **[`usefixtures mark`](#usefixtures-mark)**__,__ **[`Registering marks`](#registering-marks)**__.__  
-**&nbsp;&nbsp;&nbsp;** **5. Parametrization:** **&nbsp;**  **[`Parametrize mark`](#parametrize-mark)**__,__ **[`Fixture parametrization`](#fixture-parametrization)**__,__ **[`pytest_generate_tests`](#pytestgeneratetests)**__.__  
+**&nbsp;&nbsp;&nbsp;** **5. Parametrization:** **&nbsp;**  **[`Parametrize mark`](#parametrize-mark)**__,__ **[`Fixture parametrization`](#fixture-parametrization)**__,__ **[`pytest_generate_tests`](#pytestgeneratetests)**__,__ **[`Parametrization with marks`](#parametrization-with-marks)**__.__  
 **&nbsp;&nbsp;&nbsp;** **6. Configuration:** **&nbsp;**  **[`pytest.ini`](#pytestini)**__,__ **[`pytest_addoption`](#pytestaddoption)**__,__ **[`pytest-dotenv`](#pytest-dotenv)**__.__  
 **&nbsp;&nbsp;&nbsp;** **7. Logging:** **&nbsp;**  **[`Logging levels`](#logging-levels)**__,__ **[`CLI logs`](#cli-logs)**__,__ **[`File logs`](#file-logs)**__,__ **[`Fixture caplog`](#format)**__.__  
 **&nbsp;&nbsp;&nbsp;** **8. Libs and plugins:** **&nbsp;**  **[`assertpy`](#assertpy)**__,__ **[`pytest-rerunfailures`](#pytest-rerunfailures)**__,__ **[`pytest-xdist`](#pytest-xdist)**__.__  
@@ -539,7 +539,7 @@ def pytest_addoption(parser):
 def pytest_generate_tests(metafunc):
   # if test using fixture then 
     if "stringinput" in metafunc.fixturenames: 
-        metafunc.parametrize("stringinput", metafunc.config.getoption("stringinput"))
+        metafunc.parametrize(argnames="stringinput", argvalues=metafunc.config.getoption("stringinput"))
 
 # content of test file:
 def test_parametrize_by_generate(stringinput):
@@ -549,6 +549,29 @@ def test_parametrize_by_generate(stringinput):
 [`test_parametrize_by_generate.py`](tests/11_parametrize/03_generate/test_parametrize_by_generate.py)  
 **Pytest docs**: 
 [`about pytest_generate_tests`](https://docs.pytest.org/en/stable/how-to/parametrize.html#pytest-generate-tests)  
+___
+[`Parametrization with marks`](#contents)
+-
+Function `pytest.param()` can be set up with marks:
+```python
+@pytest.mark.parametrize(
+    ("n", "expected"),
+    [
+        (1, 2),
+        pytest.param(1, 0, marks=[pytest.mark.xfail, pytest.mark.slow]),
+        pytest.param(1, 3, marks=pytest.mark.xfail(reason="some bug")),
+        pytest.param(
+            10, 11, marks=pytest.mark.skipif(sys.version_info >= (3, 0), reason="py2k")
+        ),
+    ],
+)
+def test_increment(n, expected):
+    assert n + 1 == expected
+```
+**Code examples**: 
+[`test_marks_with_parametrize.py`](tests/11_parametrize/04_parametrize_with_marks/test_marks_with_parametrize.py)  
+**Pytest docs**: 
+[`parametrize mark`](https://docs.pytest.org/en/stable/how-to/parametrize.html)  
 ___
 [`pytest.ini`](#contents)
 -
@@ -597,24 +620,49 @@ def pytest_addoption(parser):
       "--arg",
       action="store",
       default="test",
-      choises=("dev", "test", "stage")
+      choises=("dev", "test", "stage")  # choices is optional
       help="evironment to work with"
 ) 
 ```
+
+Note: Hook Session and test running activities will invoke all hooks defined in conftest.py files closer to the root of the filesystem. 
 **Code examples**: [`test_addoption.py`](tests/13_configuration/01_addoption/test_addoption.py)  
 **Pytest docs**: [`about pytest_addoption`](https://docs.pytest.org/en/7.1.x/reference/reference.html?highlight=pytest_addoption#pytest.hookspec.pytest_addoption)  
 ___
 [`pytest-dotenv`](#contents)
 -
-Pytest plugin used to load any `key=value` as environment variables from `.env` file. `.env` default file may be changed by another one or few in `pytest.ini` (or pass env by an argument `--envfile /path/to/.env`):
+### Basic usage
+Pytest plugin used to load any `key=value` as environment variables from `.env` file. 
+```properties
+# .env default file
+admin_username=dev_admin_name
+admin_password=dev_admin_pswd
+```
+```python
+@pytest.fixture(autouse=True)
+def init():
+    admin_username = os.environ["admin_username"]
+    admin_password = os.environ["admin_password"]
+```
+### Custom environment 
+`.env` default file may be changed by another one or few in `pytest.ini` (or pass env by an argument `--envfile /path/to/.env`):
 ```ini
 [pytest]
 env_files=
   .users.dev.env
   .config.dev.env
 ```
-**Code examples**: [`test_dotenv.py`](tests/13_configuration/02_dotenv/test_dotenv.py)  
-**Plugin docs**: [`about pytest-dotenv`](https://pypi.org/project/pytest-dotenv/)  
+The files will be loaded and added to the os.environ dict object before any tests are run. If the files are not found on the working directory, it will search for the files in the ancestor directory and upwards.  
+### Overriding Existing Values
+By default the plugin will not override any variables already defined. To change behavior set env_override_existing_values in configuration
+```ini
+[pytest]
+env_override_existing_values = 1
+```
+**Code examples**: 
+[`test_dotenv.py`](tests/13_configuration/02_dotenv/test_dotenv.py)  
+**Plugin docs**: 
+[`about pytest-dotenv`](https://pypi.org/project/pytest-dotenv/)  
 ___
 [`Logging levels`](#contents)
 -

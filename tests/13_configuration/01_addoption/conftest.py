@@ -63,8 +63,8 @@ def items(request: pytest.FixtureRequest) -> list:
 
 
 @pytest.fixture()
-def credentials(env, project_path):
-    return read_config_json(project_path, f".configuration/credentials_{env}.json")
+def credentials(env, request: pytest.FixtureRequest):
+    return read_config_json(str(request.path.parent), f".configuration/credentials_{env}.json")
 
 
 @pytest.fixture()
@@ -77,11 +77,6 @@ def user(credentials):
 def admin(credentials):
     admin = credentials["admin"]
     return admin["username"], admin["password"]
-
-
-@pytest.fixture()
-def project_path(request):
-    return request.session.fspath.strpath
 
 
 def read_config_json(folder: str, file: str) -> dict:

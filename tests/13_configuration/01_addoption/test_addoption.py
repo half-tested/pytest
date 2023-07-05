@@ -1,7 +1,7 @@
-# pytest tests/configuration/01_addoption/test_addoption.py --env=stage
-# pytest tests/configuration/01_addoption/test_addoption.py --env=dev --initial-env-setup
-# pytest tests/configuration/01_addoption/test_addoption.py --item=2 --item=3.4 --count=2
-# pytest tests/configuration/01_addoption/test_addoption.py --env=stage --item=2 --item=3.4 --count=2
+# pytest tests/13_configuration/01_addoption/test_addoption.py --env=stage
+# pytest tests/13_configuration/01_addoption/test_addoption.py --env=dev --initial-env-setup
+# pytest tests/13_configuration/01_addoption/test_addoption.py --item=2 --item=3.4 --count=2
+# pytest tests/13_configuration/01_addoption/test_addoption.py --env=stage --item=2 --item=3.4 --count=2
 def test_addoption(user, items, count, env):
     user_username, user_password = user
     print(f"performing test with user '{user_username}' '{user_password}'")

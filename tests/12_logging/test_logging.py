@@ -1,8 +1,5 @@
 import logging
 import time
-import warnings
-
-import pytest
 
 
 # pytest tests/12_logging
