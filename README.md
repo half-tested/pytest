@@ -653,7 +653,7 @@ env_files=
   .config.dev.env
 ```
 The files will be loaded and added to the os.environ dict object before any tests are run. If the files are not found on the working directory, it will search for the files in the ancestor directory and upwards.  
-### Overriding Existing Values
+### Overriding existing values
 By default the plugin will not override any variables already defined. To change behavior set env_override_existing_values in configuration
 ```ini
 [pytest]
@@ -674,7 +674,7 @@ ___
 ___
 [`CLI logs`](#contents)
 -
-Activated by setting the `log_cli` configuration option to true.
+Activated by setting the `log_cli` configuration option to true. Also able to set logging level, message format and date format.
 ```ini
 [pytest]
 log_cli = True
@@ -682,17 +682,22 @@ log_level = DEBUG
 log_format = %(asctime)s %(levelname)s %(message)s
 log_date_format = %Y-%m-%d %H:%M:%S
 ```
-Alternatively may be passed as an arguments `--log-cli-level`, `--log-cli-forma`, `--log-cli-date-format`.
+Alternatively may be passed as an arguments 
+  * `--log-cli-level` 
+  * `--log-cli-format` 
+  * `--log-cli-date-format`
 
 **Code examples**: 
-[`test_logging.py`](tests/12_logging/test_logging.py) 
-[`pytest.ini`](tests/12_logging/pytest.ini)  
+[`test_logging.py`](tests/13_logging/test_logging.py) 
+[`pytest.ini`](tests/13_logging/pytest.ini)  
 **Pytest docs**: 
-[`about CLI logs`](https://docs.pytest.org/en/stable/how-to/logging.html#live-logs)  
+[`about file logs`](https://docs.pytest.org/en/stable/how-to/logging.html#live-logs)  
+**Python docs**: 
+[`about logging`](https://docs.python.org/3/library/logging.html)  
 ___
 [`File logs`](#contents)
 -
-Activated by setting the `log_file` configuration option to true.
+Activated by adding the `log_file` configuration option. Also able to set logging level, message format and date format.
 ```ini
 [pytest]
 log_file = test.log
@@ -700,23 +705,33 @@ log_file_level = INFO
 log_file_format = %(asctime)s %(levelname)s %(message)s
 log_file_date_format = %Y-%m-%d %H:%M:%S
 ```
-Alternatively may be passed as an arguments `--log-file-level`, `--log-file-forma`, `--log-file-date-format`.
+Alternatively may be passed as an arguments:
+ * `--log-file`
+ * `--log-file-level` 
+ * `--log-file-format` 
+ * `--log-file-date-format`
 
 **Code examples**: 
-[`test_logging.py`](tests/12_logging/test_logging.py) 
-[`pytest.ini`](tests/12_logging/pytest.ini)  
+[`test_logging.py`](tests/13_logging/test_logging.py) 
+[`pytest.ini`](tests/13_logging/pytest.ini)  
 **Pytest docs**: 
 [`about file logs`](https://docs.pytest.org/en/stable/how-to/logging.html#live-logs)  
+**Python docs**: 
+[`about logging`](https://docs.python.org/3/library/logging.html)  
 ___
 [`Fixture caplog`](#contents)
 -
-Inside the tests it is possible to change the log level for the captured log messages. This is supported by the caplog fixture:
+Inside the tests or fixtures it is possible to change the log level for the captured log messages. This is supported by the caplog fixture:
 ```python
 def test_logging(caplog):
     caplog.set_level(logging.INFO)
+    logging.debug("Ignored message")  # DEBUG ignored due to logging level set to INFO
 ```
-**Code examples**: [`test_logging.py`](tests/12_logging/test_logging.py) [`pytest.ini`](tests/12_logging/pytest.ini)  
-**Pytest docs**: [`about caplog fixture`](https://docs.pytest.org/en/stable/how-to/logging.html#caplog-fixture)  
+**Code examples**: 
+[`test_logging.py`](tests/13_logging/test_logging.py) 
+[`pytest.ini`](tests/13_logging/pytest.ini)  
+**Pytest docs**: 
+[`about caplog fixture`](https://docs.pytest.org/en/stable/how-to/logging.html#caplog-fixture)  
 ___
 [`assertpy`](#contents)
 -
@@ -729,8 +744,21 @@ def test_something():
     assert_that('foobar').is_length(6).starts_with('foo').ends_with('bar')
     assert_that(['a', 'b', 'c']).contains('a').does_not_contain('x')
 ```
-**Code examples**: [`test_01_assert_strings.py`](tests/14_plugins/01_assert/test_01_assert_strings.py) [`test_02_assert_numbers.py`](tests/14_plugins/01_assert/test_02_assert_numbers.py) [`test_03_assert_lists.py`](tests/14_plugins/01_assert/test_03_assert_lists.py) [`test_04_assert_tuples.py`](tests/14_plugins/01_assert/test_04_assert_tuples.py) [`test_05_assert_dicts.py`](tests/14_plugins/01_assert/test_05_assert_dicts.py) [`test_06_assert_sets.py`](tests/14_plugins/01_assert/test_06_assert_sets.py) [`test_07_assert_dates.py`](tests/14_plugins/01_assert/test_07_assert_dates.py) [`test_08_assert_files.py`](tests/14_plugins/01_assert/test_08_assert_files.py) [`test_09_assert_objects.py`](tests/14_plugins/01_assert/test_09_assert_objects.py) [`test_10_assert_filtering.py`](tests/14_plugins/01_assert/test_10_assert_filtering.py) [`test_10_assert_sorting.py`](tests/14_plugins/01_assert/test_11_assert_sorting.py)  
-**Plugin docs**: [`plugin page`](https://pypi.org/project/assertpy/) [`full documentation on github`](https://github.com/assertpy/assertpy)  
+**Code examples**: 
+[`test_01_assert_strings.py`](tests/14_plugins/01_assert/test_01_assert_strings.py) 
+[`test_02_assert_numbers.py`](tests/14_plugins/01_assert/test_02_assert_numbers.py)
+[`test_03_assert_lists.py`](tests/14_plugins/01_assert/test_03_assert_lists.py) 
+[`test_04_assert_tuples.py`](tests/14_plugins/01_assert/test_04_assert_tuples.py) 
+[`test_05_assert_dicts.py`](tests/14_plugins/01_assert/test_05_assert_dicts.py) 
+[`test_06_assert_sets.py`](tests/14_plugins/01_assert/test_06_assert_sets.py) 
+[`test_07_assert_dates.py`](tests/14_plugins/01_assert/test_07_assert_dates.py) 
+[`test_08_assert_files.py`](tests/14_plugins/01_assert/test_08_assert_files.py) 
+[`test_09_assert_objects.py`](tests/14_plugins/01_assert/test_09_assert_objects.py) 
+[`test_10_assert_filtering.py`](tests/14_plugins/01_assert/test_10_assert_filtering.py) 
+[`test_10_assert_sorting.py`](tests/14_plugins/01_assert/test_11_assert_sorting.py)  
+**Plugin docs**: 
+[`plugin page`](https://pypi.org/project/assertpy/) 
+[`full documentation on github`](https://github.com/assertpy/assertpy)  
 ___
 [`pytest-rerunfailures`](#contents)
 -
