@@ -925,6 +925,54 @@ pytest -n=2 --dist=loadfile
 # group by mark, i.e. @pytest.mark.xdist_group(name="group1")
 pytest -n=2 --dist=loadgroup
 ```
+### Creating one log file for each worker
+Due to how pytest-xdist is implemented, the `-s`/`--capture=no` option does not work.
+```python
+# content of conftest.py
+def pytest_configure(config):  # hook for plugin configuration
+    worker_id = os.environ.get("PYTEST_XDIST_WORKER")
+    if worker_id is not None:
+        logging.basicConfig(
+            format=config.getini("log_file_format"),
+            filename=f"tests_{worker_id}.log",
+            level=config.getini("log_file_level"),
+        )
+```
+When running the tests with `-n=3`, for example, three files will be created in the current directory: `tests_gw0.log`, `tests_gw1.log` and `tests_gw2.log`.
+### Making session-scoped fixtures execute only once
+pytest-xdist is designed so that each worker process will perform its own collection and execute a subset of all tests. This means that tests in different processes requesting a high-level scoped fixture (for example session) will execute the fixture code more than once, which breaks expectations and might be undesired in certain situations.
+
+While pytest-xdist does not have a builtin support for ensuring a session-scoped fixture is executed exactly once, this can be achieved by using a lock file for inter-process communication.
+
+The example below needs to execute the fixture session_data only once (because it is resource intensive, or needs to execute only once to define configuration options, etc), so it makes use of a FileLock to produce the fixture data only once when the first process requests the fixture, while the other processes will then read the data from a file.
+
+```python
+# conftest.py
+import json
+
+import pytest
+from filelock import FileLock
+
+
+@pytest.fixture(scope="session")
+def session_data(tmp_path_factory, worker_id):
+    if worker_id == "master":
+        # not executing in with multiple workers, just produce the data and let
+        # pytest's fixture caching do its job
+        return produce_expensive_data()
+
+    # get the temp directory shared by all workers
+    root_tmp_dir = tmp_path_factory.getbasetemp().parent
+
+    fn = root_tmp_dir / "data.json"
+    with FileLock(str(fn) + ".lock"):
+        if fn.is_file():
+            data = json.loads(fn.read_text())
+        else:
+            data = produce_expensive_data()
+            fn.write_text(json.dumps(data))
+    return data
+```
 **Code examples**: 
 [`test_01_parallel_load_default.py`](tests/14_plugins/03_parallel/test_01_parallel_load_default.py) 
 [`test_02_parallel_load_scope.py`](tests/14_plugins/03_parallel/test_02_parallel_load_scope.py) 
