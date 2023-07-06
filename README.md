@@ -267,10 +267,10 @@ ___
 * Cut out a lot of redundant requests
 * Provide more advanced fixture usage
 * autouse=True makes a fixture configured for autouse
-```
+```python
 @pytest.fixture(autouse=True)
 def auto_used_fixture():
-    retrun 'auto used feature content'
+    return 'auto used feature content'
 ```
 **Code examples**: 
 [`test_autouse_fixtures.py`](tests/06_autouse_fixtures/test_autouse_fixtures.py)  
@@ -324,8 +324,28 @@ ___
 [`Built-in fixtures`](#contents)
 -
 ### tmp_path and tmp_path_factory
-* tmp_path temporary directory unique to the test invocation and session-scope
-* tmp_path_factory is a session-scope fixture provides temporary directory during all test run
+* tmp_path temporary directory unique to the test invocation. 
+  ```python
+  def test_tmp_path_fixture(tmp_path):
+    d = tmp_path / "sub"
+    d.mkdir()
+    p = d / "hello.txt"
+    p.write_text('text content')
+    assert p.read_text() == 'text content'
+  ```
+* tmp_path_factory is a session-scope fixture provides temporary directory during all test run.
+  ```python
+  @pytest.fixture(scope="session")
+  def data_file(tmp_path_factory):
+    temp_dir = tmp_path_factory.mktemp("data")
+    temp_file = temp_dir / "example.txt"
+    temp_file.write_text('text content')
+    return temp_file
+  
+  def test_tmp_path_factory_fixture(data_file):
+    assert 'text content' == data_file.read_text()
+  ```
+* fixtures configuration in pytest.ini
 ```ini
 [pytest]
 ;set how many sessions should we keep the tmp_path directories (default 3)
@@ -344,6 +364,26 @@ tmp_path_retention_policy = "failed"
 [`tmp_path`](https://docs.pytest.org/en/stable/how-to/tmp_path.html#the-tmp-path-fixture) and [`tmp_path_factory`](https://docs.pytest.org/en/stable/how-to/tmp_path.html#the-tmp-path-factory-fixture)
 ### request
 Provide information on the executing test function such as passed arguments, pytest configuration, fixtures etc.  
+* `request.node.nodeid`  
+  Test id, i.e. `tests/path/test_request_fixture.py::test_request`.
+* `request.path`  
+  Provides path to test file, i.e. `tests/path/test_request_fixture.py`.
+* `request.fixturenames`  
+  List all used fixtures.
+* `request.config.getini('addopts')` 
+  Get configuration parameter value from `pytest.ini`. 
+* `request.config.getoption('--option-name')`
+  Get CLI option value. Has additional test policy on missing option and default value:
+  ```python
+  def test_request_fixture_skip_by_missing_option(request: pytest.FixtureRequest):
+    assert request.config.getoption('missing_option', skip=True) == 'will skip'
+
+  def test_request_fixture_default_option(request: pytest.FixtureRequest):
+    assert request.config.getoption('default_option', default='default_value') == 'default_value'
+
+  def test_request_fixture_passed_option(request: pytest.FixtureRequest):
+    assert request.config.getoption('-s') == 'no'
+  ```
 **Code examples**: 
 [`test_request_fixture.py`](tests/08_built_in_fixtures/02_request/test_request_fixture.py)  
 **Pytest docs**: 
