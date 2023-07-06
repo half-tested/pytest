@@ -15,23 +15,23 @@ import pytest
 
 @pytest.mark.xdist_group(name="group1")
 def test_parallel_group1_test1():
-    time.sleep(1)
+    time.sleep(2)
     pass
 
 
 @pytest.mark.xdist_group(name="group1")
 def test_parallel_group1_test2():
-    time.sleep(1)
+    time.sleep(2)
     pass
 
 
 @pytest.mark.xdist_group(name="group2")
 def test_parallel_group2_test1():
-    time.sleep(1)
+    time.sleep(2)
     pass
 
 
 @pytest.mark.xdist_group(name="group2")
 def test_parallel_group2_test2():
-    time.sleep(1)
+    time.sleep(2)
     pass

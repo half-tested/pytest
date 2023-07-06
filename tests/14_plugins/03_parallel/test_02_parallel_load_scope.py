@@ -14,20 +14,20 @@ import time
 
 
 def test_parallel_loadscope_test1():
-    time.sleep(1)
+    time.sleep(2)
     pass
 
 
 def test_parallel_loadscope_test2():
-    time.sleep(1)
+    time.sleep(2)
     pass
 
 
 class TestClass:
     def test_parallel_loadscope_class_test1(self):
-        time.sleep(1)
+        time.sleep(2)
         pass
 
     def test_parallel_loadscope_class_test2(self):
-        time.sleep(1)
+        time.sleep(2)
         pass

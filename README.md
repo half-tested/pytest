@@ -10,7 +10,7 @@ Contents
 **&nbsp;&nbsp;&nbsp;** **4. Marks:** **&nbsp;**  **[`skip`](#skip-mark)**__,__ **[`skipif`](#skipif-mark)**__,__ **[`xfail mark`](#xfail-mark)**__,__ **[`usefixtures mark`](#usefixtures-mark)**__,__ **[`Registering marks`](#registering-marks)**__.__  
 **&nbsp;&nbsp;&nbsp;** **5. Parametrization:** **&nbsp;**  **[`Parametrize mark`](#parametrize-mark)**__,__ **[`Fixture parametrization`](#fixture-parametrization)**__,__ **[`pytest_generate_tests`](#pytestgeneratetests)**__,__ **[`Parametrization with marks`](#parametrization-with-marks)**__.__  
 **&nbsp;&nbsp;&nbsp;** **6. Configuration:** **&nbsp;**  **[`pytest.ini`](#pytestini)**__,__ **[`pytest_addoption`](#pytestaddoption)**__,__ **[`pytest-dotenv`](#pytest-dotenv)**__.__  
-**&nbsp;&nbsp;&nbsp;** **7. Logging:** **&nbsp;**  **[`Logging levels`](#logging-levels)**__,__ **[`CLI logs`](#cli-logs)**__,__ **[`File logs`](#file-logs)**__,__ **[`Fixture caplog`](#format)**__.__  
+**&nbsp;&nbsp;&nbsp;** **7. Logging:** **&nbsp;**  **[`Logging levels`](#logging-levels)**__,__ **[`CLI logs`](#cli-logs)**__,__ **[`File logs`](#file-logs)**__,__ **[`Fixture caplog`](#fixture-caplog)**__.__  
 **&nbsp;&nbsp;&nbsp;** **8. Libs and plugins:** **&nbsp;**  **[`assertpy`](#assertpy)**__,__ **[`pytest-rerunfailures`](#pytest-rerunfailures)**__,__ **[`pytest-xdist`](#pytest-xdist)**__.__  
 
 ___
@@ -735,14 +735,107 @@ def test_logging(caplog):
 ___
 [`assertpy`](#contents)
 -
-Simple assertions library with fluent API. Provides assertions for strings, numbers, lists, tuples, dicts, sets, files, objects. Supports filtering and sorting
+Simple assertions library with fluent API. Provides assertions for strings, numbers, lists, tuples, dicts, sets, files, objects. Supports filtering and sorting.
+### Asserting strings
 ```python
 from assertpy import assert_that
 
-def test_something():
+def test_with_assert_that():
     assert_that(1 + 2).is_equal_to(3)
     assert_that('foobar').is_length(6).starts_with('foo').ends_with('bar')
     assert_that(['a', 'b', 'c']).contains('a').does_not_contain('x')
+```
+### Asserting numbers
+```python 
+    assert_that(123).is_greater_than(100)
+    assert_that(123).is_less_than_or_equal_to(200)
+    assert_that(123).is_between(100, 200)
+    assert_that(123).is_close_to(100, 25)
+ ```
+### Asserting lists
+```python
+    assert_that(['a', 'b']).contains('b', 'a')
+    assert_that(['c', 'b', 'a']).is_sorted(reverse=True)
+    assert_that(['a', 'b', 'c']).does_not_contain_duplicates()
+```
+### Asserting tuples
+```python
+    assert_that((1, 2, 3)).contains(3, 2, 1)
+    assert_that((1, 2, 3)).does_not_contain(4, 5, 6)
+    assert_that((1, 2, 3)).contains_only(1, 2, 3)
+    assert_that((1, 2, 3)).is_sorted()
+```
+### Asserting dicts
+```python
+    assert_that({'a': 1, 'b': 2}).is_equal_to({'b': 2, 'a': 1})
+    assert_that({'a': 1, 'b': 2}).contains_only('a', 'b')
+    assert_that({'a': 1, 'b': 2}).is_subset_of({'a': 1, 'b': 2, 'c': 3})
+    assert_that({'a': 1, 'b': 2}).contains_value(1)
+    assert_that({'a': 1, 'b': 2}).contains_entry({'a': 1})
+``` 
+### Asserting sets
+```python
+    assert_that(set(['a', 'b'])).is_equal_to(set(['b', 'a']))
+    assert_that(set(['a', 'b'])).does_not_contain('x', 'y')
+    assert_that(set(['a', 'b'])).is_subset_of(set(['a', 'b', 'c']))
+```
+### Asserting dates
+```python
+    today = datetime.datetime.today()
+    yesterday = today - datetime.timedelta(days=1)
+
+    assert_that(yesterday).is_before(today)
+    assert_that(today).is_after(yesterday)
+
+    middle = today - datetime.timedelta(hours=12)
+    assert_that(middle).is_between(yesterday, today)
+  
+    today_0h = today - datetime.timedelta(hours=today.hour)
+    assert_that(today).is_equal_to_ignoring_time(today_0h)
+  
+    x = datetime.datetime(1980, 1, 2, 3, 4, 5, 6)  # 1980-01-02 03:04:05.000006
+    assert_that(x).has_month(1)
+```
+### Asserting files
+```python
+    assert_that('foo.txt').exists()
+    assert_that('foo.txt').is_file()
+    assert_that('test_dir').is_directory()
+    contents = contents_of('foo.txt', 'ascii')
+    assert_that(contents).starts_with('foo').ends_with('bar').contains('oob')
+```
+### Asserting objects
+```python
+    fred = Person('Fred', 'Smith')
+    bob = Person('Bob', 'Barr')
+    people = [fred, bob]
+
+    # first_name is a class attribute
+    assert_that(people).extracting('first_name').is_equal_to(['Fred', 'Bob'])
+    assert_that(people).extracting('first_name').contains('Fred', 'Bob')
+    assert_that(people).extracting('first_name').does_not_contain('Charlie')
+```   
+### Assert filtering
+```python
+    users = [
+        {'user': 'Fred', 'age': 36, 'active': True},
+        {'user': 'Bob', 'age': 40, 'active': False},
+        {'user': 'Johnny', 'age': 13, 'active': True}
+    ]
+    assert_that(users).extracting('user', filter='active').is_equal_to(['Fred', 'Johnny'])
+    assert_that(users).extracting('user', filter={'age': 36, 'active': True}).is_equal_to(['Fred'])
+    assert_that(users).extracting('user', filter=lambda x: x['age'] > 20).is_equal_to(['Fred', 'Bob'])
+```
+### Assert sorting
+```python
+    users = [
+        {'user': 'Fred', 'age': 36, 'active': True},
+        {'user': 'Bob', 'age': 40, 'active': False},
+        {'user': 'Johnny', 'age': 13, 'active': True}
+    ]
+    assert_that(users).extracting('user', sort='age').is_equal_to(['Johnny', 'Fred', 'Bob'])
+    assert_that(users).extracting('user', sort=['active', 'age']).is_equal_to(['Bob', 'Johnny', 'Fred'])
+    assert_that(users).extracting('user', sort=lambda x: -x['age']).is_equal_to(['Bob', 'Fred', 'Johnny'])
 ```
 **Code examples**: 
 [`test_01_assert_strings.py`](tests/14_plugins/01_assert/test_01_assert_strings.py) 
@@ -763,37 +856,49 @@ ___
 [`pytest-rerunfailures`](#contents)
 -
 Re-run tests plugin to eliminate flaky failures. Provides CLI options to re-run all failed tests and decorator to re-run single flaky test.
-#### CLI options to re-run all failed tests
+### Mark to re-run single flaky test
+```python
+# re-run individual failures. All parameters are optional. 
+# default re-run count is 1. Delay time in seconds.
+@pytest.mark.flaky(reruns=5, reruns_delay=2, condition=sys.platform.startswith("win32"))
+def test_rerun():
+    assert random.choice([True, False])
+
+# re-runs any except ValueError
+@pytest.mark.flaky(rerun_except="ValueError")  
+def test_rerun_except():
+    raise ValueError()
+
+# re-runs only OSError or ValueError
+@pytest.mark.flaky(reruns=3, only_rerun=["OSError", "ValueError"])
+def test_rerun_only():
+    raise OSError()
+```
+### CLI options to re-run all failed tests
 ```
 # Re-run all failures
 pytest --reruns 5
 
-# Re-run all failures with 1 sec between re-runs
-pytest --reruns 5 --reruns-delay 1
-
-# Re-run all failures matching certain expressions
-pytest --reruns 5 --only-rerun AssertionError
-pytest --reruns 5 --only-rerun AssertionError --only-rerun ValueError
+# Re-run all failures with 4 sec between re-runs
+pytest --reruns 5 --reruns-delay 4
 
 # Re-run all failures other than matching certain expressions
-pytest --reruns 5 --rerun-except AssertionError
-pytest --reruns 5 --rerun-except AssertionError --rerun-except OSError
+pytest --reruns=2 --rerun-except=ValueError --rerun-except=OSError
+
+# Re-run all failures matching certain expressions
+pytest --reruns=3 --only-rerun=ValueError
 ```
-#### Decorator to re-run single flaky test
-```python
-# Re-run individual failures. "reruns_delay" and "condition" are optional
-@pytest.mark.flaky(reruns=5, reruns_delay=2, condition=sys.platform.startswith("win32"))
-def test_example():
-    import random
-    assert random.choice([True, False])
-```
-**Code examples**: [`test_rerun.py`](tests/14_plugins/02_rerun/test_rerun.py)  
-**Plugin docs**: [`plugin page with documentation`](https://pypi.org/project/pytest-rerunfailures/)  
+Note: This plugin may not be used with class, module, and package level fixtures.
+**Code examples**: 
+[`test_rerun_with_cli_flags.py`](tests/14_plugins/02_rerun/test_rerun_with_cli_flags.py) 
+[`test_rerun_with_marks.py`](tests/14_plugins/02_rerun/test_rerun_with_marks.py)  
+**Plugin docs**: 
+[`plugin page with documentation`](https://pypi.org/project/pytest-rerunfailures)  
 ___
 [`pytest-xdist`](#contents)
 -
 The pytest-xdist plugin extends pytest with new test execution modes, the most used being distributing tests across multiple CPUs to speed up test execution.
-#### Running tests across multiple CPUs
+### Running tests across multiple CPUs
 To send tests to multiple CPUs, use the -n (or --numprocesses) option:
 ```
 # running in 3 processes:
@@ -802,19 +907,31 @@ pytest -n 3
 # running as many processes as computer has CPU cores:
 pytest -n auto
 ```
-#### The test distribution algorithm is configured with the `--dist` CLI option
-* `--dist` (default): Sends pending tests to any worker that is available, without any guaranteed order. Scheduling can be fine-tuned with the –maxschedchunk option, see output of pytest –help.
+### The test distribution algorithm is configured with the `--dist` CLI option
+* `--dist` (default): Sends pending tests to any worker that is available, without any guaranteed order. 
 * `--dist` loadscope: Tests are grouped by module for test functions and by class for test methods. Groups are distributed to available workers as whole units. This guarantees that all tests in a group run in the same process. This can be useful if you have expensive module-level or class-level fixtures. Grouping by class takes priority over grouping by module.
 * `--dist` loadfile: Tests are grouped by their containing file. Groups are distributed to available workers as whole units. This guarantees that all tests in a file run in the same worker.
 * `--dist` loadgroup: Tests are grouped by the xdist_group mark. Groups are distributed to available workers as whole units. This guarantees that all tests with same xdist_group name run in the same worker. Example: `@pytest.mark.xdist_group(name="group1")`
+```
+# no group, any test to any worker, --dist=load is default
+pytest -n=2 --dist=load
 
+# group by class and module
+pytest -n=2 --dist=loadscope
+
+# group by file
+pytest -n=2 --dist=loadfile
+
+# group by mark, i.e. @pytest.mark.xdist_group(name="group1")
+pytest -n=2 --dist=loadgroup
+```
 **Code examples**: 
 [`test_01_parallel_load_default.py`](tests/14_plugins/03_parallel/test_01_parallel_load_default.py) 
 [`test_02_parallel_load_scope.py`](tests/14_plugins/03_parallel/test_02_parallel_load_scope.py) 
 [`test_03_parallel_load_file.py`](tests/14_plugins/03_parallel/test_03_parallel_load_file.py) 
 [`test_04_parallel_load_group.py`](tests/14_plugins/03_parallel/test_04_parallel_load_group.py) 
 [`test_05_parallel_log_workers.py`](tests/14_plugins/03_parallel/05_log_workers/test_05_parallel_log_workers.py) 
-[`test_06_parallel_fixture.py`](tests/14_plugins/03_parallel/06_single_session_scope_fixture/test_06_parallel_fixture.py)  
+[`test_06_parallel_fixture.py`](tests/14_plugins/03_parallel/06_single_session_scope_fixture/test_06_parallel_fixture.py)    
 **Plugin docs**: 
 [`plugin page`](https://pypi.org/project/pytest-xdist/) 
 [`full documentation page`](https://pytest-xdist.readthedocs.io)  
