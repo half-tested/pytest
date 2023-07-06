@@ -11,7 +11,7 @@ def order():
     return []
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def append_first(order, first_entry):
     return order.append(first_entry)
 

@@ -1,6 +1,8 @@
 import pytest
 
 
+# pytest tests/07_fixtures_order/test_fixtures_order.py --setup-plan
+
 @pytest.fixture(scope='session')
 def session_fixture():
     print("\nsession fixture")

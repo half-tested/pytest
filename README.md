@@ -284,11 +284,42 @@ ___
   * dependencies
   * autouse
 * Higher-scoped fixtures are executed first. Higher-scopes (such as session) are executed before lower-scoped fixtures (such as function or class)
+  ```python
+    @pytest.fixture()
+    def runs_second():
+        pass
+  
+  
+    @pytest.fixture(scope='session')
+    def runs_first():
+        pass
+  ```
 * Fixtures of the same order execute based on dependencies
-* Autouse fixtures are executed first within their scope
+  ```python
+    @pytest.fixture()
+    def runs_second(runs_first):
+        pass
 
-**Code examples**: [`test_fixtures_order.py`](tests/07_fixtures_order/test_fixtures_order.py)  
-**Pytest docs**: [`about fixtures order`](https://docs.pytest.org/en/stable/reference/fixtures.html#fixture-instantiation-order)
+    @pytest.fixture()
+    def runs_first():
+        pass
+  ```
+* Autouse fixtures are executed first within their scope
+    ```python
+    @pytest.fixture()
+    def runs_second():
+        pass
+  
+  
+    @pytest.fixture(autouse=True)
+    def runs_first():
+        pass
+  ```
+
+**Code examples**: 
+[`test_fixtures_order.py`](tests/07_fixtures_order/test_fixtures_order.py)  
+**Pytest docs**: 
+[`about fixtures order`](https://docs.pytest.org/en/stable/reference/fixtures.html#fixture-instantiation-order)  
 ___
 [`Built-in fixtures`](#contents)
 -
