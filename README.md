@@ -155,34 +155,35 @@ pytest --cache-show
 ___
 [`CLI flags`](#contents)
 -
+### Prints options and config file settings
 ```bash
-pytest -h   # prints options and config file settings
+pytest -h 
 ```
-#### Increase verbosity (more detailed output)
+### Increase verbosity (more detailed output)
 ```
 pytest -v, --verbose
 ```
-#### Decrease verbosity
+### Decrease verbosity
 ```
 pytest -q, --quite
 ```
-#### Disable stdout capturing (prints shown in console)
+### Disable stdout capturing (prints shown in console)
 ```
 pytest -s, --capture=no
 ```
-#### Stop at first failure
+### Stop at first failure
 ```
 pytest -x, --exitfirst
 ```
-#### Collect tests without execution
+### Collect tests without execution
 ```
 pytest --collect-only
 ```
-#### Show N slowest tests (N=0 for all)
+### Show N slowest tests (N=0 for all)
 ```
 pytest --durations=N
 ```
-#### JUnitXML format files (can be read by Jenkins or other CI/CD tool):
+### JUnitXML format files (can be read by Jenkins or other CI/CD tool):
 ```
 pytest --junit-xml=path
 ```
@@ -346,17 +347,17 @@ ___
     assert 'text content' == data_file.read_text()
   ```
 * fixtures configuration in pytest.ini
-```ini
-[pytest]
-;set how many sessions should we keep the tmp_path directories (default 3)
-tmp_path_retention_count = 5
-
-;control which directories created by the tmp_path fixture are kept around, based on test outcome (default all)
-;  * all: retains directories for all tests, regardless of the outcome
-;  * failed: retains directories only for tests with outcome error or failed
-;  * none: directories are always removed after each test ends, regardless of the outcome
-tmp_path_retention_policy = "failed"
-```
+  ```ini
+  [pytest]
+  ;set how many sessions should we keep the tmp_path directories (default 3)
+  tmp_path_retention_count = 5
+  
+  ;control which directories created by the tmp_path fixture are kept around, based on test outcome (default all)
+  ;  * all: retains directories for all tests, regardless of the outcome
+  ;  * failed: retains directories only for tests with outcome error or failed
+  ;  * none: directories are always removed after each test ends, regardless of the outcome
+  tmp_path_retention_policy = "failed"
+  ```
 **Code examples**:
 [`test_01_tmp_path.py`](tests/08_built_in_fixtures/01_temp_directory/test_01_tmp_path.py) 
 [`test_02_tmp_path_factory.py`](tests/08_built_in_fixtures/01_temp_directory/test_02_tmp_path_factory.py)  
@@ -370,9 +371,9 @@ Provide information on the executing test function such as passed arguments, pyt
   Provides path to test file, i.e. `tests/path/test_request_fixture.py`.
 * `request.fixturenames`  
   List all used fixtures.
-* `request.config.getini('addopts')` 
+* `request.config.getini('addopts')`  
   Get configuration parameter value from `pytest.ini`. 
-* `request.config.getoption('--option-name')`
+* `request.config.getoption('--option-name')`  
   Get CLI option value. Has additional test policy on missing option and default value:
   ```python
   def test_request_fixture_skip_by_missing_option(request: pytest.FixtureRequest):
@@ -397,7 +398,37 @@ Has helper methods for safely patching and mocking functionality in tests. Chang
 **Pytest docs**: 
 [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html)  
 ### cache
-Store and retrieve values across pytest runs  
+Stores values in pytest cache and retrieve values across test runs. 
+
+For example, any expensive computation may be cached once evaluated. Next test run evaluated data is able from cache to get:
+```python
+def expensive_computation():
+    print("\n...running expensive computation...")
+    return [1, 2, 3]
+
+
+@pytest.fixture
+def mydata(cache):
+    val = cache.get("my_key", None)
+    if val is None:
+        val = expensive_computation()
+        cache.set("my_key", val)
+    return val
+
+
+def test_config_cache(mydata):
+    assert mydata == [1, 2, 3]
+```
+Works with data that is JSON serializable:
+* works with examples:
+  * `cache.set("key", "42")`
+  * `cache.set("key", [1, 2, 3])`
+  * `cache.set("key", {"name": "John", "age": 30})`
+* TypeError caused on examples:
+  * `cache.set("key", int)`
+  * `cache.set("my_data", set([1, 2, 3]))`
+  * `cache.set("my_data", file_obj)`
+
 **Code examples**: 
 [`test_config_cache.py`](tests/08_built_in_fixtures/04_config_cache/test_config_cache.py)  
 **Pytest docs**: 
