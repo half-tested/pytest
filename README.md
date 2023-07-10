@@ -390,11 +390,108 @@ Provide information on the executing test function such as passed arguments, pyt
 **Pytest docs**: 
 [`request`](https://docs.pytest.org/en/stable/reference/reference.html#request)  
 ### monkeypatch
-Has helper methods for safely patching and mocking functionality in tests. Change current directory, update environment variables, mock object attributes (may be useful for mock api or any class methods).  
+Has helper methods for safely patching and mocking functionality in tests. Change current directory, update environment variables, mock objects. All modifications not affecting original environment. Modifications relates to test execution only. 
+```python
+monkeypatch.setattr(obj, name, value, raising=True)
+monkeypatch.delattr(obj, name, raising=True)
+monkeypatch.setitem(mapping, name, value)
+monkeypatch.delitem(obj, name, raising=True)
+monkeypatch.setenv(name, value, prepend=None)
+monkeypatch.delenv(name, raising=True)
+monkeypatch.syspath_prepend(path)
+monkeypatch.chdir(path)
+monkeypatch.context()
+```
+All modifications will be undone after the requesting test function or fixture has finished. The raising parameter determines if a KeyError or AttributeError will be raised if the target of the set/deletion operation does not exist.
+* Modify `sys.path`  
+  Prepend the path to `sys.path`, allowing Python to locate and import the custom module. This is useful when need to test code that depends on external modules or libraries.
+  ```python
+  def test_syspath_prepend(monkeypatch):
+    new_path = "/path/to/my/module"
+    monkeypatch.syspath_prepend(new_path)
+  
+    import new_module
+    # perform actions with imported module
+  ```
+* Change working directory  
+  `monkeypatch.chdir` method changes the current working directory to the specified path. helpful when need to test code that depends on the current working directory (CWD).
+  ```python
+  def test_chdir(monkeypatch):
+    monkeypatch.chdir('/my/custom/path')
+    assert os.getcwd() == '/my/custom/path'
+  ```
+* Modify dictionaries  
+  Modifying the values of dictionaries e.g. any global configuration can be modified for certain test cases. Use `monkeypatch.setitem` to patch the dictionary for the test. `monkeypatch.delitem` can be used to remove items. If raising is set to True (default), it raises an exception if the item does not exist.
+  ```python
+  CONFIG = {'key1': 'value1', 'key2': 'value2'}
+
+  def test_setitem(monkeypatch):
+      monkeypatch.setitem(CONFIG, 'key1', 'new_value')
+      assert CONFIG['key1'] == 'new_value'
+  
+  def test_delitem(monkeypatch):
+      monkeypatch.delitem(CONFIG, 'key2')
+      assert 'key2' not in CONFIG
+  ```
+* Modify environment variables
+  Manipulate environment variables for a test. Add/update/delete variable or prepend values to existing environment variable.
+  ```python
+  def test_monkey_update_env(monkey_user):
+    # overwrite existing USER environment variable:
+    monkeypatch.setenv("USER", "testinguser")
+    assert os.getenv("USER") == "testinguser"
+
+  def test_monkey_new_env(monkeypatch):
+      assert 'MY_PARAM' not in os.environ
+      # create new environment variable:
+      monkeypatch.setenv("MY_PARAM", "my variable")
+      assert os.getenv("MY_PARAM") == "my variable"
+
+  def test_monkey_prepend(monkeypatch, tmp_path):
+      initial_paths_count = len(os.getenv('PATH').split(":"))
+      # add value to environment variable:
+      monkeypatch.setenv("PATH", str(tmp_path), prepend=":")
+      paths = os.getenv('PATH').split(":")
+      assert len(paths) == initial_paths_count + 1
+      assert paths[0] == str(tmp_path)
+  
+  def test_monkey_delete_env(monkeypatch):
+      assert 'HOME' in os.environ
+      monkeypatch.delenv("HOME")
+      assert 'HOME' not in os.environ
+  
+  def test_monkey_delete_env_raises(monkeypatch):
+      assert 'MY_PARAM' not in os.environ
+      with pytest.raises(KeyError):
+          monkeypatch.delenv("MY_PARAM", raising=True)
+  ```
+* Modify attributes
+  Methods `monkeypatch.setattr`, `monkeypatch.delattr` sets/deletes the attribute of an object. If the attribute does not exist, it can optionally raise an AttributeError.
+  ```python
+  def test_context(monkeypatch, tmp_path):
+    initial_wd = os.getcwd()
+    with monkeypatch.context() as monkey:  # context mocks works only under its code block
+        monkey.setattr(os, "getcwd", lambda: str(tmp_path))
+        assert os.getcwd() == str(tmp_path)
+    assert os.getcwd() == initial_wd
+
+
+  def test_undo(monkeypatch, tmp_path):
+      monkeypatch.delattr("os.getcwd")
+      with pytest.raises(AttributeError):
+          print(os.getcwd())
+      monkeypatch.undo()  # undo previous monkeypatch
+      print(os.getcwd())
+  ```
 **Code examples**: 
-[`test_monkeypatch_setattr.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setattr.py) 
-[`test_monkeypatch_setenv.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setenv.py) 
-[`test_monkeypatch_setitem.py`](tests/08_built_in_fixtures/03_mokeypatch/test_monkeypatch_setitem.py)  
+[`test_monkeypatch_attributes.py`](tests%2F08_built_in_fixtures%2F03_mokeypatch%2Ftest_monkeypatch_attributes.py)
+[`test_monkeypatch_attributes_path.py`](tests%2F08_built_in_fixtures%2F03_mokeypatch%2Ftest_monkeypatch_attributes_path.py)
+[`test_monkeypatch_attributes_request.py`](tests%2F08_built_in_fixtures%2F03_mokeypatch%2Ftest_monkeypatch_attributes_request.py)
+[`test_monkeypatch_change_working_directory.py`](tests%2F08_built_in_fixtures%2F03_mokeypatch%2Ftest_monkeypatch_change_working_directory.py)
+[`test_monkeypatch_dictionaries.py`](tests%2F08_built_in_fixtures%2F03_mokeypatch%2Ftest_monkeypatch_dictionaries.py)
+[`test_monkeypatch_environment_variables.py`](tests%2F08_built_in_fixtures%2F03_mokeypatch%2Ftest_monkeypatch_environment_variables.py)
+[`test_monkeypatch_syspath_prepend.py`](tests%2F08_built_in_fixtures%2F03_mokeypatch%2Ftest_monkeypatch_syspath_prepend.py)
+[`test_monkeypatch_context.py`](tests%2F08_built_in_fixtures%2F03_mokeypatch%2Ftest_monkeypatch_context.py)
 **Pytest docs**: 
 [`monkeypatch`](https://docs.pytest.org/en/stable/how-to/monkeypatch.html)  
 ### cache
